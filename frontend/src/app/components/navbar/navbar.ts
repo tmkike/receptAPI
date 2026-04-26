@@ -6,8 +6,8 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-navbar',
   standalone: true,
   imports: [RouterLink, FormsModule],
-  templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.css'
+  templateUrl: './navbar.html',
+  styleUrl: './navbar.scss'
 })
 export class NavbarComponent {
   searchText: string = '';
