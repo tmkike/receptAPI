@@ -1,0 +1,20 @@
+<header class="header">
+  <div class="search-section">
+    <div class="search-box">
+      <input
+        type="text"
+        placeholder="Keresés..."
+        [(ngModel)]="searchText"
+      />
+      <button (click)="onSearch()">Keresés</button>
+    </div>
+  </div>
+
+<nav class="navbar">
+  <a routerLink="/kezdooldal">Kezdőoldal</a>
+  <a routerLink="/receptek">Receptek</a>
+  <a routerLink="/uj-recept">Új recept</a>
+  <a routerLink="/rolunk">Rólunk</a>
+</nav>
+
+</header>
