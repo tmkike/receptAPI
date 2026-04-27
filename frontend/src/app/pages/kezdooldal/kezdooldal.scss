@@ -1,7 +1,12 @@
 .home-page {
   max-width: 1100px;
-  margin: 0 auto;
-  padding: 48px 20px 64px;
+  margin: 0 auto 64px;
+  padding: 42px;
+  border: 1px solid #b8eeeb;
+  border-radius: 24px;
+  background-color: #dffaf8;
+  box-shadow: 0 8px 24px rgba(0, 143, 135, 0.08);
+  box-sizing: border-box;
   color: #111;
 }
 
@@ -109,7 +114,9 @@ h1 {
 
 @media (max-width: 760px) {
   .home-page {
-    padding-top: 34px;
+    margin: 0 12px 48px;
+    padding: 28px 18px;
+    border-radius: 16px;
   }
 
   .intro {

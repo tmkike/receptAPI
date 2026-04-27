@@ -1,5 +1,11 @@
 <header class="header">
   <div class="search-section">
+    <div class="social-box" aria-label="Közösségi média linkek">
+      <a href="#" aria-label="YouTube">YT</a>
+      <a href="#" aria-label="Instagram">IG</a>
+      <a href="#" aria-label="Facebook">FB</a>
+    </div>
+
     <div class="search-box">
       <input
         type="text"
@@ -13,15 +19,13 @@
   <nav class="navbar" aria-label="Fő navigáció">
     <a
       routerLink="/kezdooldal"
-      routerLinkActive="active"
-      [routerLinkActiveOptions]="{ exact: true }"
     >
       Kezdőoldal
     </a>
-    <a routerLink="/receptek" routerLinkActive="active">Receptek</a>
-    <a routerLink="/kedvencek" routerLinkActive="active">Kedvencek</a>
-    <a routerLink="/hozzaad" routerLinkActive="active">Recept feltöltése</a>
-    <a routerLink="/bejelentkezes" routerLinkActive="active">Bejelentkezés</a>
-    <a routerLink="/regisztracio" routerLinkActive="active">Regisztráció</a>
+    <a routerLink="/receptek">Receptek</a>
+    <a routerLink="/kedvencek">Kedvencek</a>
+    <a routerLink="/hozzaad">Recept feltöltése</a>
+    <a routerLink="/bejelentkezes">Bejelentkezés</a>
+    <a routerLink="/regisztracio">Regisztráció</a>
   </nav>
 </header>
