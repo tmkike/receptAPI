@@ -1,1 +1,35 @@
-<p>bejelentkezes works!</p>
+<main class="login-page">
+  <section class="login-card">
+    <div class="login-copy">
+      <p class="eyebrow">Bejelentkezés</p>
+      <h1>Üdv újra a Recept Tárban!</h1>
+      <p>
+        Jelentkezz be, hogy elérd a kedvenc receptjeidet, és bármikor
+        folytathasd a saját receptgyűjteményed építését.
+      </p>
+    </div>
+
+    <form class="login-form">
+      <label for="email">E-mail cím</label>
+      <input id="email" type="email" placeholder="pelda@email.hu" />
+
+      <label for="password">Jelszó</label>
+      <input id="password" type="password" placeholder="Add meg a jelszavad" />
+
+      <div class="form-row">
+        <label class="remember">
+          <input type="checkbox" />
+          <span>Emlékezz rám</span>
+        </label>
+        <a href="#">Elfelejtett jelszó?</a>
+      </div>
+
+      <button type="button">Bejelentkezés</button>
+
+      <p class="register-text">
+        Még nincs fiókod?
+        <a routerLink="/regisztracio">Regisztrálj itt</a>
+      </p>
+    </form>
+  </section>
+</main>

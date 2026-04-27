@@ -48,6 +48,12 @@
     transform 0.2s ease;
 }
 
+.social-box svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
 .social-box a:hover {
   background-color: #52ddd5;
   transform: translateY(-1px);

@@ -10,5 +10,5 @@ import { NavbarComponent } from './components/navbar/navbar';
   styleUrl: './app.scss',
 })
 export class App {
-  protected readonly title = signal('frontend');
+  protected readonly title = signal('Recept Tár');
 }
