@@ -10,12 +10,18 @@
     </div>
   </div>
 
-<nav class="navbar">
-  <a routerLink="/kezdooldal">Kezdőoldal</a>
-  <a routerLink="/receptek">Receptek</a>
-  <a routerLink="/bejelentkezes">Bejelentkezés</a>
-  <a routerLink="/kedvencek">Kedvencek</a>
-  <a routerLink="/hozzaad">Recept Feltöltése</a>
-</nav>
-
+  <nav class="navbar" aria-label="Fő navigáció">
+    <a
+      routerLink="/kezdooldal"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      Kezdőoldal
+    </a>
+    <a routerLink="/receptek" routerLinkActive="active">Receptek</a>
+    <a routerLink="/kedvencek" routerLinkActive="active">Kedvencek</a>
+    <a routerLink="/hozzaad" routerLinkActive="active">Recept feltöltése</a>
+    <a routerLink="/bejelentkezes" routerLinkActive="active">Bejelentkezés</a>
+    <a routerLink="/regisztracio" routerLinkActive="active">Regisztráció</a>
+  </nav>
 </header>
