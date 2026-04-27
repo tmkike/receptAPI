@@ -1,1 +1,35 @@
-<p>regisztracio works!</p>
+<main class="register-page">
+  <section class="register-card">
+    <div class="register-copy">
+      <p class="eyebrow">Regisztráció</p>
+      <h1>Hozd létre a saját receptes fiókodat!</h1>
+      <p>
+        Egy fiókkal nemcsak böngészheted a recepteket, hanem feltöltheted a
+        saját kedvenceidet is. A neked tetsző fogásokat elmentheted a
+        kedvencek közé, így később gyorsan megtalálod őket.
+      </p>
+    </div>
+
+    <form class="register-form">
+      <label for="email">E-mail cím</label>
+      <input id="email" type="email" placeholder="pelda@email.hu" />
+
+      <label for="password">Jelszó</label>
+      <input id="password" type="password" placeholder="Adj meg egy jelszót" />
+
+      <label for="passwordAgain">Jelszó újra</label>
+      <input
+        id="passwordAgain"
+        type="password"
+        placeholder="Írd be még egyszer a jelszót"
+      />
+
+      <button type="button">Regisztráció</button>
+
+      <p class="login-text">
+        Már van fiókod?
+        <a routerLink="/bejelentkezes">Jelentkezz be</a>
+      </p>
+    </form>
+  </section>
+</main>
