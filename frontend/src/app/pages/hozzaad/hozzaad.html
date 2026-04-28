@@ -1,1 +1,74 @@
-<p>hozzaad works!</p>
+<main class="upload-page">
+  <section class="upload-card">
+    <div class="upload-copy">
+      <p class="eyebrow">Recept feltöltése</p>
+      <h1>Oszd meg a kedvenc fogásodat!</h1>
+      <p>
+        Írd le röviden, mitől lesz igazán jó ez a recept. Egyelőre csak az
+        oldalt készítjük elő, így a mentés még nem küldi be backend felé az
+        adatokat.
+      </p>
+    </div>
+
+    <form class="recipe-form" (ngSubmit)="saveRecipe()">
+      <label for="recipeName">Recept neve</label>
+      <input
+        id="recipeName"
+        name="recipeName"
+        type="text"
+        placeholder="Például: Házi túrógombóc"
+        [(ngModel)]="recipeName"
+      />
+
+      <div class="field-group">
+        <span class="field-label">Recept képe</span>
+        <label class="image-upload" for="recipeImage">
+          <span class="plus" aria-hidden="true">+</span>
+          <span>{{ selectedImageName || 'Kép hozzáadása' }}</span>
+        </label>
+        <input
+          #imageInput
+          id="recipeImage"
+          class="file-input"
+          name="recipeImage"
+          type="file"
+          accept="image/*"
+          (change)="onImageSelected($event)"
+        />
+      </div>
+
+      <label for="cookingTime">Elkészítési idő</label>
+      <div class="time-input">
+        <input
+          id="cookingTime"
+          name="cookingTime"
+          type="number"
+          min="1"
+          placeholder="45"
+          [(ngModel)]="cookingTime"
+        />
+        <span>perc</span>
+      </div>
+
+      <label for="description">Recept leírása</label>
+      <textarea
+        id="description"
+        name="description"
+        rows="7"
+        placeholder="Írd le az alapanyagokat, lépéseket és a bevált apró trükköket."
+        [(ngModel)]="description"
+      ></textarea>
+
+      <div class="form-actions">
+        <button class="secondary-button" type="button" (click)="resetForm()">
+          Meggondoltam
+        </button>
+        <button class="primary-button" type="submit">Mentés</button>
+      </div>
+
+      @if (saveMessage) {
+        <p class="save-message">{{ saveMessage }}</p>
+      }
+    </form>
+  </section>
+</main>

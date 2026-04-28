@@ -10,21 +10,54 @@
       </p>
     </div>
 
-    <form class="register-form">
+    <form class="register-form" (ngSubmit)="register()">
       <label for="email">E-mail cím</label>
-      <input id="email" type="email" placeholder="pelda@email.hu" />
+      <input
+        id="email"
+        name="email"
+        type="email"
+        placeholder="pelda@email.hu"
+        [(ngModel)]="email"
+        (ngModelChange)="onEmailChange()"
+        (blur)="validateEmail()"
+        [class.input-error]="emailInvalid"
+      />
+
+      @if (emailTouched && emailInvalid) {
+        <p class="error-message">Adj meg egy érvényes e-mail címet.</p>
+      }
 
       <label for="password">Jelszó</label>
-      <input id="password" type="password" placeholder="Adj meg egy jelszót" />
+      <input
+        id="password"
+        name="password"
+        type="password"
+        placeholder="Adj meg egy jelszót"
+        [(ngModel)]="password"
+        (ngModelChange)="onPasswordChange()"
+      />
 
       <label for="passwordAgain">Jelszó újra</label>
       <input
         id="passwordAgain"
+        name="passwordAgain"
         type="password"
         placeholder="Írd be még egyszer a jelszót"
+        [(ngModel)]="passwordAgain"
+        (ngModelChange)="onPasswordChange()"
+        (blur)="validatePasswords()"
+        [class.input-error]="passwordMismatch"
       />
 
-      <button type="button">Regisztráció</button>
+      @if (passwordAgainTouched && passwordMismatch) {
+        <p class="error-message">Nem egyezik a két jelszó.</p>
+      }
+
+      <button type="submit">Regisztráció</button>
+
+      @if (successMessage) {
+        <p class="success-message">{{ successMessage }}</p>
+      }
 
       <p class="login-text">
         Már van fiókod?

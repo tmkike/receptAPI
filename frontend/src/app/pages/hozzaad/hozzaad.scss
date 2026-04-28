@@ -1,0 +1,249 @@
+.upload-page {
+  max-width: 1100px;
+  margin: 0 auto 64px;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.upload-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 460px;
+  gap: 42px;
+  align-items: start;
+  padding: 42px;
+  border: 1px solid #b8eeeb;
+  border-radius: 24px;
+  background-color: #dffaf8;
+  box-shadow: 0 8px 24px rgba(0, 143, 135, 0.08);
+}
+
+.upload-copy {
+  max-width: 540px;
+}
+
+.eyebrow {
+  margin: 0 0 12px;
+  color: #007f78;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(34px, 5vw, 52px);
+  line-height: 1.05;
+  font-weight: 800;
+}
+
+.upload-copy p:not(.eyebrow) {
+  margin: 20px 0 0;
+  color: #333;
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+.recipe-form {
+  display: grid;
+  gap: 12px;
+  padding: 24px;
+  border: 1px solid #c8eeee;
+  border-radius: 18px;
+  background-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.recipe-form label,
+.field-label {
+  color: #102c2a;
+  font-weight: 700;
+}
+
+.recipe-form input,
+.recipe-form textarea {
+  width: 100%;
+  border: 1px solid #9de8e3;
+  border-radius: 10px;
+  background-color: #f8ffff;
+  color: #000;
+  font: inherit;
+  font-size: 16px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.recipe-form input {
+  min-height: 48px;
+  padding: 0 14px;
+}
+
+.recipe-form textarea {
+  min-height: 160px;
+  padding: 14px;
+  resize: vertical;
+}
+
+.recipe-form input:focus,
+.recipe-form textarea:focus {
+  border-color: #00b8ad;
+  box-shadow: 0 0 0 3px rgba(0, 184, 173, 0.18);
+}
+
+.field-group {
+  display: grid;
+  gap: 10px;
+}
+
+.image-upload {
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  min-height: 150px;
+  padding: 18px;
+  border: 2px dashed #66d9d2;
+  border-radius: 12px;
+  background-color: #f8ffff;
+  color: #102c2a;
+  cursor: pointer;
+  text-align: center;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.image-upload:hover {
+  border-color: #00b8ad;
+  background-color: #ecfffd;
+  transform: translateY(-1px);
+}
+
+.plus {
+  display: inline-grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background-color: #00b8ad;
+  color: #000;
+  font-size: 36px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+.time-input {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid #9de8e3;
+  border-radius: 10px;
+  background-color: #f8ffff;
+}
+
+.time-input:focus-within {
+  border-color: #00b8ad;
+  box-shadow: 0 0 0 3px rgba(0, 184, 173, 0.18);
+}
+
+.time-input input {
+  border: none;
+  box-shadow: none;
+}
+
+.time-input input:focus {
+  box-shadow: none;
+}
+
+.time-input span {
+  padding: 0 14px;
+  color: #3d3d3d;
+  font-weight: 700;
+}
+
+.form-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+button {
+  min-height: 50px;
+  border: none;
+  border-radius: 999px;
+  color: #000;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 800;
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+button:hover {
+  box-shadow: 0 4px 12px rgba(0, 184, 173, 0.24);
+  transform: translateY(-1px);
+}
+
+.primary-button {
+  background-color: #00b8ad;
+}
+
+.primary-button:hover {
+  background-color: #52ddd5;
+}
+
+.secondary-button {
+  border: 1px solid #9de8e3;
+  background-color: #e9fbf9;
+}
+
+.secondary-button:hover {
+  background-color: #d8f6f3;
+}
+
+button:active {
+  background-color: #008f87;
+}
+
+.save-message {
+  margin: 4px 0 0;
+  color: #007f78;
+  font-weight: 700;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .upload-card {
+    grid-template-columns: 1fr;
+  }
+
+  .recipe-form {
+    max-width: 560px;
+  }
+}
+
+@media (max-width: 640px) {
+  .upload-page {
+    padding: 0 12px;
+  }
+
+  .upload-card {
+    padding: 28px 18px;
+    border-radius: 16px;
+  }
+
+  .form-actions {
+    grid-template-columns: 1fr;
+  }
+}

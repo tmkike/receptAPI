@@ -1,1 +1,92 @@
-<p>kedvencek works!</p>
+<main class="favorites-page">
+  <section class="favorites-hero">
+    <p class="eyebrow">Kedvencek</p>
+    <h1>A kedvenc receptjeid egy helyen</h1>
+    <p class="intro">
+      Itt jelennek majd meg azok a receptek, amelyeket később elmentesz a
+      kedvencek közé. Így gyorsan visszatalálsz a bevált ebédekhez, ünnepi
+      fogásokhoz vagy azokhoz az ötletekhez, amelyeket legközelebb mindenképp
+      kipróbálnál.
+    </p>
+
+    <a routerLink="/receptek" class="browse-button">Receptek böngészése</a>
+  </section>
+
+  <section class="filter-section" aria-label="Kedvenc receptek szűrői">
+    <div class="filter-controls">
+      <button
+        class="filter-toggle"
+        type="button"
+        (click)="toggleFilters()"
+        [attr.aria-expanded]="filtersOpen"
+        aria-controls="favoriteFilters"
+      >
+        <span>Szűrők</span>
+        <span class="toggle-icon" aria-hidden="true">{{ filtersOpen ? '−' : '+' }}</span>
+      </button>
+
+      <label class="page-size-control" for="favoritesPerPage">
+        <span>Kedvencek oldalanként</span>
+        <select id="favoritesPerPage" name="favoritesPerPage" [(ngModel)]="favoritesPerPage">
+          <option [ngValue]="15">15</option>
+          <option [ngValue]="30">30</option>
+          <option [ngValue]="45">45</option>
+        </select>
+      </label>
+    </div>
+
+    @if (filtersOpen) {
+      <div id="favoriteFilters" class="filter-panel">
+        @for (filter of filters; track filter.name) {
+          <button
+            class="filter-chip"
+            type="button"
+            (click)="toggleFilter(filter)"
+            [class.active]="filter.active"
+            [attr.aria-pressed]="filter.active"
+          >
+            {{ filter.name }}
+          </button>
+        }
+      </div>
+    }
+  </section>
+
+  <section class="empty-state" aria-label="Kedvencek üres állapota">
+    <div class="empty-icon" aria-hidden="true">♡</div>
+    <div>
+      <h2>Még nincs elmentett recepted</h2>
+      <p>
+        Ha egy recept megtetszik, később egy kedvenc gombbal ide tudod majd
+        gyűjteni. Ez az oldal addig is elő van készítve a saját receptlistádnak.
+      </p>
+    </div>
+  </section>
+
+  <section class="preview-section" aria-label="Kedvenc receptek sablon nézete">
+    <h2>Így fognak kinézni a kedvencek</h2>
+
+    <div class="favorite-grid">
+      <article>
+        <span class="recipe-tag">Gyors vacsora</span>
+        <h3>Krémes paradicsomos tészta</h3>
+        <p>Egyszerű, hétköznapi recept, amit kevés alapanyagból is össze lehet dobni.</p>
+        <span class="recipe-time">25 perc</span>
+      </article>
+
+      <article>
+        <span class="recipe-tag">Családi kedvenc</span>
+        <h3>Házi túrógombóc</h3>
+        <p>Könnyű, puha desszert tejföllel, morzsával és egy kis porcukorral.</p>
+        <span class="recipe-time">45 perc</span>
+      </article>
+
+      <article>
+        <span class="recipe-tag">Hétvégi ebéd</span>
+        <h3>Citromos sült csirke</h3>
+        <p>Illatos, szaftos fogás, amit salátával vagy sült krumplival is tálalhatsz.</p>
+        <span class="recipe-time">60 perc</span>
+      </article>
+    </div>
+  </section>
+</main>

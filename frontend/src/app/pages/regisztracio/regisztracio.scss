@@ -75,6 +75,31 @@ h1 {
   box-shadow: 0 0 0 3px rgba(0, 184, 173, 0.18);
 }
 
+.register-form input.input-error {
+  border-color: #d93025;
+  background-color: #fff8f7;
+}
+
+.register-form input.input-error:focus {
+  border-color: #d93025;
+  box-shadow: 0 0 0 3px rgba(217, 48, 37, 0.14);
+}
+
+.error-message {
+  margin: -4px 0 0;
+  color: #d93025;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.success-message {
+  margin: 0;
+  color: #007f78;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+}
+
 button {
   min-height: 50px;
   margin-top: 8px;

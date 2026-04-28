@@ -1,1 +1,70 @@
-<p>receptek works!</p>
+<main class="recipes-page">
+  <section class="recipes-hero">
+    <p class="eyebrow">Receptek</p>
+    <h1>Böngészd a feltöltött recepteket</h1>
+    <p class="intro">
+      Ezen az oldalon jelennek majd meg a közösség által feltöltött receptek.
+      Később innen tudsz majd keresni, válogatni, megnyitni egy recept részleteit,
+      és elmenteni a neked tetsző fogásokat a kedvenceid közé.
+    </p>
+  </section>
+
+  <section class="filter-section" aria-label="Recept szűrők">
+    <div class="filter-controls">
+      <button
+        class="filter-toggle"
+        type="button"
+        (click)="toggleFilters()"
+        [attr.aria-expanded]="filtersOpen"
+        aria-controls="recipeFilters"
+      >
+        <span>Szűrők</span>
+        <span class="toggle-icon" aria-hidden="true">{{ filtersOpen ? '−' : '+' }}</span>
+      </button>
+
+      <label class="page-size-control" for="recipesPerPage">
+        <span>Receptek oldalanként</span>
+        <select id="recipesPerPage" name="recipesPerPage" [(ngModel)]="recipesPerPage">
+          <option [ngValue]="15">15</option>
+          <option [ngValue]="30">30</option>
+          <option [ngValue]="45">45</option>
+        </select>
+      </label>
+    </div>
+
+    @if (filtersOpen) {
+      <div id="recipeFilters" class="filter-panel">
+        @for (filter of filters; track filter.name) {
+          <button
+            class="filter-chip"
+            type="button"
+            (click)="toggleFilter(filter)"
+            [class.active]="filter.active"
+            [attr.aria-pressed]="filter.active"
+          >
+            {{ filter.name }}
+          </button>
+        }
+      </div>
+    }
+  </section>
+
+  <section class="empty-state" aria-label="Nincs megjeleníthető recept">
+    <div class="empty-icon" aria-hidden="true">+</div>
+    <h2>Még nincsenek megjeleníthető receptek</h2>
+    <p>
+      Amint elkészül az adatok bekötése, itt fognak sorakozni a feltöltött
+      receptek. Addig ez az oldal elő van készítve a kereséshez, böngészéshez és
+      a kedvencek kezeléséhez.
+    </p>
+  </section>
+
+  <section class="toolbar" aria-label="Receptek kezelése">
+    <div class="toolbar-text">
+      <h2>Hiányzik a recepted?</h2>
+      <p>Add hozzá az adatbázisunkhoz, hogy később mások is megtalálhassák.</p>
+    </div>
+
+    <a routerLink="/hozzaad" class="upload-button">Recept feltöltése</a>
+  </section>
+</main>
