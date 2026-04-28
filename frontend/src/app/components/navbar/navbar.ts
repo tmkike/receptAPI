@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { filter } from 'rxjs';
+import { ApiService, AutocompleteRecipe } from '../../core/api.service';
 
 @Component({
   selector: 'app-navbar',
@@ -9,10 +11,81 @@ import { RouterLink } from '@angular/router';
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss',
 })
-export class NavbarComponent {
-  searchText: string = '';
+export class NavbarComponent implements OnInit {
+  searchText = '';
+  suggestions: AutocompleteRecipe[] = [];
+  username = '';
+  isLoggedIn = false;
 
-  onSearch() {
-    console.log('Keresés:', this.searchText);
+  constructor(
+    private readonly apiService: ApiService,
+    private readonly router: Router,
+  ) {}
+
+  ngOnInit(): void {
+    this.loadProfile();
+    this.router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe(() => this.loadProfile());
+  }
+
+  onSearchChange(): void {
+    const keyword = this.searchText.trim();
+
+    if (keyword.length < 2) {
+      this.suggestions = [];
+      return;
+    }
+
+    this.apiService.autocomplete(keyword).subscribe({
+      next: (response) => {
+        this.suggestions = response.responseRecipes;
+      },
+      error: () => {
+        this.suggestions = [];
+      },
+    });
+  }
+
+  onSearch(): void {
+    this.suggestions = [];
+    this.router.navigate(['/receptek']);
+  }
+
+  selectSuggestion(recipeName: string): void {
+    this.searchText = recipeName;
+    this.suggestions = [];
+    this.router.navigate(['/receptek']);
+  }
+
+  logout(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userid');
+    localStorage.removeItem('username');
+    this.isLoggedIn = false;
+    this.username = '';
+    this.router.navigate(['/bejelentkezes']);
+  }
+
+  private loadProfile(): void {
+    const token = localStorage.getItem('token');
+    this.isLoggedIn = Boolean(token);
+
+    if (!token) {
+      this.username = '';
+      return;
+    }
+
+    this.username = localStorage.getItem('username') || 'Bejelentkezve';
+
+    this.apiService.getProfile().subscribe({
+      next: (profile) => {
+        this.username = profile.username;
+        localStorage.setItem('username', profile.username);
+      },
+      error: () => {
+        this.username = localStorage.getItem('username') || 'Bejelentkezve';
+      },
+    });
   }
 }

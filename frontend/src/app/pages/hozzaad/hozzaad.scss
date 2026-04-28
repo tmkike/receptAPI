@@ -54,6 +54,16 @@ h1 {
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
 }
 
+.login-warning {
+  padding: 14px;
+  border: 1px solid #f0b4ad;
+  border-radius: 10px;
+  background-color: #fff8f7;
+  color: #b3261e;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
 .recipe-form label,
 .field-label {
   color: #102c2a;
@@ -117,6 +127,12 @@ h1 {
   border-color: #00b8ad;
   background-color: #ecfffd;
   transform: translateY(-1px);
+}
+
+.image-upload.disabled,
+.time-input.disabled {
+  opacity: 0.68;
+  pointer-events: none;
 }
 
 .plus {
@@ -216,9 +232,22 @@ button:active {
   background-color: #008f87;
 }
 
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.68;
+  transform: none;
+}
+
 .save-message {
   margin: 4px 0 0;
   color: #007f78;
+  font-weight: 700;
+  text-align: center;
+}
+
+.error-message {
+  margin: 4px 0 0;
+  color: #d93025;
   font-weight: 700;
   text-align: center;
 }

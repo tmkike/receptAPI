@@ -49,15 +49,56 @@
     }
   </section>
 
-  <section class="empty-state" aria-label="Nincs megjeleníthető recept">
-    <div class="empty-icon" aria-hidden="true">+</div>
-    <h2>Még nincsenek megjeleníthető receptek</h2>
-    <p>
-      Amint elkészül az adatok bekötése, itt fognak sorakozni a feltöltött
-      receptek. Addig ez az oldal elő van készítve a kereséshez, böngészéshez és
-      a kedvencek kezeléséhez.
-    </p>
-  </section>
+  @if (isLoading) {
+    <section class="empty-state" aria-label="Receptek betöltése">
+      <div class="empty-icon" aria-hidden="true">+</div>
+      <h2>Receptek betöltése...</h2>
+      <p>Kérlek várj egy pillanatot, amíg lekérjük az adatbázisból a recepteket.</p>
+    </section>
+  } @else if (recipes.length) {
+    <section class="recipe-grid" aria-label="Megjeleníthető receptek">
+      @for (recipe of recipes; track recipe.receptID) {
+        <article class="recipe-card">
+          @if (getImageUrl(recipe)) {
+            <img [src]="getImageUrl(recipe)" [alt]="recipe.receptNev" />
+          }
+
+          <div class="recipe-card-content">
+            <h2>{{ recipe.receptNev }}</h2>
+            <p>{{ recipe.receptSzoveg }}</p>
+            <div class="recipe-actions">
+              <button type="button" (click)="addToFavorites(recipe)">Kedvenchez adás</button>
+              <button class="secondary-action" type="button" (click)="reportRecipe(recipe)">
+                Jelentés
+              </button>
+            </div>
+          </div>
+        </article>
+      }
+    </section>
+  } @else {
+    <section class="empty-state" aria-label="Nincs megjeleníthető recept">
+      <div class="empty-icon" aria-hidden="true">+</div>
+      <h2>Még nincsenek megjeleníthető receptek</h2>
+      <p>
+        Amint elkészül az adatok bekötése, itt fognak sorakozni a feltöltött
+        receptek. Addig ez az oldal elő van készítve a kereséshez, böngészéshez és
+        a kedvencek kezeléséhez.
+      </p>
+    </section>
+  }
+
+  @if (errorMessage) {
+    <p class="status-message error">{{ errorMessage }}</p>
+  }
+
+  @if (favoriteMessage) {
+    <p class="status-message">{{ favoriteMessage }}</p>
+  }
+
+  @if (reportMessage) {
+    <p class="status-message">{{ reportMessage }}</p>
+  }
 
   <section class="toolbar" aria-label="Receptek kezelése">
     <div class="toolbar-text">

@@ -92,11 +92,21 @@ h1 {
   font-weight: 700;
 }
 
+.helper-text {
+  margin: -6px 0 0;
+  color: #526260;
+  font-size: 13px;
+}
+
 .success-message {
   margin: 0;
   color: #007f78;
   font-size: 14px;
   font-weight: 700;
+  text-align: center;
+}
+
+.center-message {
   text-align: center;
 }
 
@@ -124,6 +134,12 @@ button:hover {
 
 button:active {
   background-color: #008f87;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.68;
+  transform: none;
 }
 
 .login-text {

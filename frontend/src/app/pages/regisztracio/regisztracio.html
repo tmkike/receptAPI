@@ -36,6 +36,7 @@
         [(ngModel)]="password"
         (ngModelChange)="onPasswordChange()"
       />
+      <p class="helper-text">Minimum 6 karakternek kell lennie.</p>
 
       <label for="passwordAgain">Jelszó újra</label>
       <input
@@ -53,10 +54,20 @@
         <p class="error-message">Nem egyezik a két jelszó.</p>
       }
 
-      <button type="submit">Regisztráció</button>
+      @if (passwordTooShort) {
+        <p class="error-message">A jelszónak legalább 6 karakter hosszúnak kell lennie.</p>
+      }
+
+      <button type="submit" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Regisztráció...' : 'Regisztráció' }}
+      </button>
 
       @if (successMessage) {
         <p class="success-message">{{ successMessage }}</p>
+      }
+
+      @if (errorMessage) {
+        <p class="error-message center-message">{{ errorMessage }}</p>
       }
 
       <p class="login-text">

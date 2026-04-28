@@ -18,26 +18,50 @@
       </a>
     </div>
 
-    <div class="search-box">
-      <input
-        type="text"
-        placeholder="Keresés..."
-        [(ngModel)]="searchText"
-      />
-      <button (click)="onSearch()">Keresés</button>
+    @if (isLoggedIn) {
+      <div class="profile-box">
+        <span>{{ username }}</span>
+        <button type="button" (click)="logout()">Kilépés</button>
+      </div>
+    }
+
+    <div class="search-wrap">
+      <div class="search-box">
+        <input
+          type="text"
+          placeholder="Keresés..."
+          [(ngModel)]="searchText"
+          (ngModelChange)="onSearchChange()"
+          (keydown.enter)="onSearch()"
+        />
+        <button type="button" (click)="onSearch()">Keresés</button>
+      </div>
+
+      @if (suggestions.length) {
+        <div class="suggestions" aria-label="Keresési javaslatok">
+          @for (suggestion of suggestions; track suggestion.receptNev) {
+            <button type="button" (click)="selectSuggestion(suggestion.receptNev)">
+              {{ suggestion.receptNev }}
+            </button>
+          }
+        </div>
+      }
     </div>
   </div>
 
   <nav class="navbar" aria-label="Fő navigáció">
-    <a
-      routerLink="/kezdooldal"
-    >
-      Kezdőoldal
-    </a>
+    <a routerLink="/kezdooldal">Kezdőoldal</a>
     <a routerLink="/receptek">Receptek</a>
-    <a routerLink="/kedvencek">Kedvencek</a>
-    <a routerLink="/bejelentkezes">Bejelentkezés</a>
-    <a routerLink="/regisztracio">Regisztráció</a>
+    @if (isLoggedIn) {
+      <button class="nav-button" type="button" (click)="logout()">Kijelentkezés</button>
+    } @else {
+      <a routerLink="/bejelentkezes">Bejelentkezés</a>
+    }
+    @if (isLoggedIn) {
+      <a routerLink="/kedvencek">Kedvencek</a>
+    } @else {
+      <a routerLink="/regisztracio">Regisztráció</a>
+    }
     <a routerLink="/hozzaad">Recept feltöltése</a>
   </nav>
 </header>

@@ -34,10 +34,25 @@ router.post('/favorites', requireAuth, (req, res) => {
 
     if (type === 'isFavorite') {
       const rows = db
-        .prepare('SELECT recipe_id FROM favorites WHERE user_id = ? ORDER BY recipe_id ASC')
+        .prepare(
+          `SELECT
+            recipes.id,
+            recipes.name,
+            recipes.text,
+            COALESCE(recipes.image_url, '') AS image_url
+          FROM favorites
+          JOIN recipes ON recipes.id = favorites.recipe_id
+          WHERE favorites.user_id = ?
+          ORDER BY recipes.name ASC`
+        )
         .all(req.user.userid);
 
-      const responseRecipes = rows.map((row) => ({ receptID: String(row.recipe_id) }));
+      const responseRecipes = rows.map((row) => ({
+        receptID: String(row.id),
+        receptNev: row.name,
+        receptSzoveg: row.text,
+        receptKepURL: row.image_url,
+      }));
       return res.json({ responseRecipes });
     }
 

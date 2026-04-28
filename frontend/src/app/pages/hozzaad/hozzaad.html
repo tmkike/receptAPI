@@ -4,13 +4,18 @@
       <p class="eyebrow">Recept feltöltése</p>
       <h1>Oszd meg a kedvenc fogásodat!</h1>
       <p>
-        Írd le röviden, mitől lesz igazán jó ez a recept. Egyelőre csak az
-        oldalt készítjük elő, így a mentés még nem küldi be backend felé az
-        adatokat.
+        Írd le röviden, mitől lesz igazán jó ez a recept. A mentés az
+        adatbázisba küldi a receptet, bejelentkezett felhasználóként.
       </p>
     </div>
 
     <form class="recipe-form" (ngSubmit)="saveRecipe()">
+      @if (!isLoggedIn) {
+        <div class="login-warning">
+          Csak regisztrált, bejelentkezett tagok tölthetnek fel receptet.
+        </div>
+      }
+
       <label for="recipeName">Recept neve</label>
       <input
         id="recipeName"
@@ -18,11 +23,12 @@
         type="text"
         placeholder="Például: Házi túrógombóc"
         [(ngModel)]="recipeName"
+        [disabled]="!isLoggedIn"
       />
 
       <div class="field-group">
         <span class="field-label">Recept képe</span>
-        <label class="image-upload" for="recipeImage">
+        <label class="image-upload" for="recipeImage" [class.disabled]="!isLoggedIn">
           <span class="plus" aria-hidden="true">+</span>
           <span>{{ selectedImageName || 'Kép hozzáadása' }}</span>
         </label>
@@ -34,11 +40,12 @@
           type="file"
           accept="image/*"
           (change)="onImageSelected($event)"
+          [disabled]="!isLoggedIn"
         />
       </div>
 
       <label for="cookingTime">Elkészítési idő</label>
-      <div class="time-input">
+      <div class="time-input" [class.disabled]="!isLoggedIn">
         <input
           id="cookingTime"
           name="cookingTime"
@@ -46,6 +53,7 @@
           min="1"
           placeholder="45"
           [(ngModel)]="cookingTime"
+          [disabled]="!isLoggedIn"
         />
         <span>perc</span>
       </div>
@@ -57,17 +65,29 @@
         rows="7"
         placeholder="Írd le az alapanyagokat, lépéseket és a bevált apró trükköket."
         [(ngModel)]="description"
+        [disabled]="!isLoggedIn"
       ></textarea>
 
       <div class="form-actions">
-        <button class="secondary-button" type="button" (click)="resetForm()">
+        <button
+          class="secondary-button"
+          type="button"
+          (click)="resetForm()"
+          [disabled]="!isLoggedIn"
+        >
           Meggondoltam
         </button>
-        <button class="primary-button" type="submit">Mentés</button>
+        <button class="primary-button" type="submit" [disabled]="!isLoggedIn || isSubmitting">
+          {{ isSubmitting ? 'Mentés...' : 'Mentés' }}
+        </button>
       </div>
 
       @if (saveMessage) {
         <p class="save-message">{{ saveMessage }}</p>
+      }
+
+      @if (errorMessage) {
+        <p class="error-message">{{ errorMessage }}</p>
       }
     </form>
   </section>

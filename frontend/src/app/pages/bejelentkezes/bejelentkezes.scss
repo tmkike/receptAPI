@@ -130,6 +130,20 @@ button:active {
   background-color: #008f87;
 }
 
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.68;
+  transform: none;
+}
+
+.error-message {
+  margin: 0;
+  color: #d93025;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+}
+
 .register-text {
   margin: 4px 0 0;
   color: #333;

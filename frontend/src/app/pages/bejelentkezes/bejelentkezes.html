@@ -9,12 +9,26 @@
       </p>
     </div>
 
-    <form class="login-form">
+    <form class="login-form" (ngSubmit)="login()">
       <label for="email">E-mail cím</label>
-      <input id="email" type="email" placeholder="pelda@email.hu" />
+      <input
+        id="email"
+        name="email"
+        type="email"
+        placeholder="pelda@email.hu"
+        [(ngModel)]="email"
+        (ngModelChange)="clearMessages()"
+      />
 
       <label for="password">Jelszó</label>
-      <input id="password" type="password" placeholder="Add meg a jelszavad" />
+      <input
+        id="password"
+        name="password"
+        type="password"
+        placeholder="Add meg a jelszavad"
+        [(ngModel)]="password"
+        (ngModelChange)="clearMessages()"
+      />
 
       <div class="form-row">
         <label class="remember">
@@ -24,7 +38,13 @@
         <a href="#">Elfelejtett jelszó?</a>
       </div>
 
-      <button type="button">Bejelentkezés</button>
+      <button type="submit" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Bejelentkezés...' : 'Bejelentkezés' }}
+      </button>
+
+      @if (errorMessage) {
+        <p class="error-message">{{ errorMessage }}</p>
+      }
 
       <p class="register-text">
         Még nincs fiókod?
