@@ -12,6 +12,7 @@ export type Recipe = {
   receptSzoveg: string;
   receptKepURL: string;
   receptID: string;
+  receptIdo?: string;
 };
 
 export type AutocompleteRecipe = {
@@ -41,6 +42,10 @@ export class ApiService {
 
   getDailyRecipes() {
     return this.http.get<{ responseRecipes: Recipe[] }>(`${this.apiUrl}/dailyRecipes`);
+  }
+
+  getRecipes() {
+    return this.http.get<{ responseRecipes: Recipe[] }>(`${this.apiUrl}/recipes`);
   }
 
   addFavorite(receptID: string) {

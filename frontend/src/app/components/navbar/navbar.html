@@ -52,16 +52,17 @@
   <nav class="navbar" aria-label="Fő navigáció">
     <a routerLink="/kezdooldal">Kezdőoldal</a>
     <a routerLink="/receptek">Receptek</a>
+    <a routerLink="/hozzaad">Recept feltöltése</a>
     @if (isLoggedIn) {
-      <button class="nav-button" type="button" (click)="logout()">Kijelentkezés</button>
+      <a routerLink="/kedvencek">Kedvencek</a>
     } @else {
       <a routerLink="/bejelentkezes">Bejelentkezés</a>
     }
     @if (isLoggedIn) {
-      <a routerLink="/kedvencek">Kedvencek</a>
+      <button class="nav-button" type="button" (click)="logout()">Kijelentkezés</button>
     } @else {
       <a routerLink="/regisztracio">Regisztráció</a>
     }
-    <a routerLink="/hozzaad">Recept feltöltése</a>
+    
   </nav>
 </header>

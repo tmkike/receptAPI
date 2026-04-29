@@ -24,7 +24,12 @@
 
       <label class="page-size-control" for="recipesPerPage">
         <span>Receptek oldalanként</span>
-        <select id="recipesPerPage" name="recipesPerPage" [(ngModel)]="recipesPerPage">
+        <select
+          id="recipesPerPage"
+          name="recipesPerPage"
+          [(ngModel)]="recipesPerPage"
+          (ngModelChange)="changeRecipesPerPage()"
+        >
           <option [ngValue]="15">15</option>
           <option [ngValue]="30">30</option>
           <option [ngValue]="45">45</option>
@@ -49,33 +54,107 @@
     }
   </section>
 
-  @if (isLoading) {
+  @if (isLoading()) {
     <section class="empty-state" aria-label="Receptek betöltése">
       <div class="empty-icon" aria-hidden="true">+</div>
       <h2>Receptek betöltése...</h2>
       <p>Kérlek várj egy pillanatot, amíg lekérjük az adatbázisból a recepteket.</p>
     </section>
-  } @else if (recipes.length) {
+  } @else if (recipes().length) {
+    @if (shouldShowPagination) {
+      <nav class="pagination" aria-label="Receptek lapozása fent">
+        <span>{{ paginationLabel }}</span>
+        <div class="pagination-buttons">
+          <button type="button" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">
+            Előző
+          </button>
+          @for (page of pageNumbers; track page) {
+            <button
+              type="button"
+              (click)="goToPage(page)"
+              [class.active]="page === currentPage"
+              [attr.aria-current]="page === currentPage ? 'page' : null"
+            >
+              {{ page }}
+            </button>
+          }
+          <button
+            type="button"
+            (click)="goToPage(currentPage + 1)"
+            [disabled]="currentPage === totalPages"
+          >
+            Következő
+          </button>
+        </div>
+      </nav>
+    }
+
     <section class="recipe-grid" aria-label="Megjeleníthető receptek">
-      @for (recipe of recipes; track recipe.receptID) {
+      @for (recipe of paginatedRecipes; track recipe.receptID) {
         <article class="recipe-card">
+          <button
+            class="report-button"
+            type="button"
+            (click)="reportRecipe(recipe)"
+            aria-label="Recept jelentése"
+          >
+            &#128078;
+          </button>
+
           @if (getImageUrl(recipe)) {
             <img [src]="getImageUrl(recipe)" [alt]="recipe.receptNev" />
           }
 
           <div class="recipe-card-content">
             <h2>{{ recipe.receptNev }}</h2>
+            @if (recipe.receptIdo) {
+              <p class="recipe-time">{{ recipe.receptIdo }}</p>
+            }
             <p>{{ recipe.receptSzoveg }}</p>
             <div class="recipe-actions">
-              <button type="button" (click)="addToFavorites(recipe)">Kedvenchez adás</button>
-              <button class="secondary-action" type="button" (click)="reportRecipe(recipe)">
-                Jelentés
+              <button
+                class="favorite-button"
+                type="button"
+                (click)="toggleFavorite(recipe)"
+                [class.active]="isFavorite(recipe)"
+                [disabled]="isSavingFavorite(recipe)"
+              >
+                <span aria-hidden="true">{{ isFavorite(recipe) ? '♥' : '♡' }}</span>
+                {{ isFavorite(recipe) ? 'Kedvencekből kivétel' : 'Kedvencekhez adás' }}
               </button>
             </div>
           </div>
         </article>
       }
     </section>
+
+    @if (shouldShowPagination) {
+      <nav class="pagination bottom" aria-label="Receptek lapozása lent">
+        <span>{{ paginationLabel }}</span>
+        <div class="pagination-buttons">
+          <button type="button" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">
+            Előző
+          </button>
+          @for (page of pageNumbers; track page) {
+            <button
+              type="button"
+              (click)="goToPage(page)"
+              [class.active]="page === currentPage"
+              [attr.aria-current]="page === currentPage ? 'page' : null"
+            >
+              {{ page }}
+            </button>
+          }
+          <button
+            type="button"
+            (click)="goToPage(currentPage + 1)"
+            [disabled]="currentPage === totalPages"
+          >
+            Következő
+          </button>
+        </div>
+      </nav>
+    }
   } @else {
     <section class="empty-state" aria-label="Nincs megjeleníthető recept">
       <div class="empty-icon" aria-hidden="true">+</div>

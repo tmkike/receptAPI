@@ -15,6 +15,68 @@
     </div>
   </section>
 
+  <section class="daily-recipes" aria-label="Mai recept ötletek">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Mai ötletek</p>
+        <h2>5 ajánlatunk hogy mit főzz ma!</h2>
+      </div>
+
+      <a routerLink="/receptek" class="text-link">Összes recept</a>
+    </div>
+
+    @if (isLoadingRecipes()) {
+      <div class="recipe-state">
+        <p>Receptek betöltése...</p>
+      </div>
+    } @else if (recipesErrorMessage()) {
+      <div class="recipe-state error">
+        <p>{{ recipesErrorMessage() }}</p>
+      </div>
+    } @else if (dailyRecipes().length) {
+      <div class="recipe-preview-grid">
+        @for (recipe of dailyRecipes(); track recipe.receptID) {
+          <article class="recipe-preview">
+            @if (getImageUrl(recipe)) {
+              <img [src]="getImageUrl(recipe)" [alt]="recipe.receptNev" />
+            }
+
+            <div class="recipe-preview-content">
+              @if (isLoggedIn()) {
+                <button
+                  class="favorite-button"
+                  type="button"
+                  (click)="toggleFavorite(recipe)"
+                  [class.active]="isFavorite(recipe)"
+                  [disabled]="isSavingFavorite(recipe)"
+                  [attr.aria-label]="
+                    isFavorite(recipe) ? 'Eltávolítás a kedvencekből' : 'Kedvenchez adás'
+                  "
+                >
+                  {{ isFavorite(recipe) ? '♥' : '♡' }}
+                </button>
+              }
+
+              <h3>{{ recipe.receptNev }}</h3>
+              @if (recipe.receptIdo) {
+                <p class="recipe-time">{{ recipe.receptIdo }}</p>
+              }
+              <p>{{ recipe.receptSzoveg }}</p>
+            </div>
+          </article>
+        }
+      </div>
+    } @else {
+      <div class="recipe-state">
+        <p>Még nincsenek megjeleníthető receptek.</p>
+      </div>
+    }
+
+    @if (favoriteMessage()) {
+      <p class="favorite-status">{{ favoriteMessage() }}</p>
+    }
+  </section>
+
   <section class="features" aria-label="Fő funkciók">
     <article>
       <h2>Receptfeltöltés</h2>

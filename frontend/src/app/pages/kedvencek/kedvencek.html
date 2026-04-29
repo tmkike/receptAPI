@@ -51,7 +51,7 @@
     }
   </section>
 
-  @if (isLoading) {
+  @if (isLoading()) {
     <section class="empty-state" aria-label="Kedvencek betöltése">
       <div class="empty-icon" aria-hidden="true">♡</div>
       <div>
@@ -59,9 +59,9 @@
         <p>Kérlek várj egy pillanatot, amíg lekérjük az elmentett recepteket.</p>
       </div>
     </section>
-  } @else if (favorites.length) {
+  } @else if (favorites().length) {
     <section class="favorite-grid" aria-label="Kedvenc receptek">
-      @for (recipe of favorites; track recipe.receptID) {
+      @for (recipe of favorites(); track recipe.receptID) {
         <article>
           @if (getImageUrl(recipe)) {
             <img [src]="getImageUrl(recipe)" [alt]="recipe.receptNev" />
@@ -69,6 +69,9 @@
 
           <div class="favorite-content">
             <h2>{{ recipe.receptNev }}</h2>
+            @if (recipe.receptIdo) {
+              <p class="recipe-time">{{ recipe.receptIdo }}</p>
+            }
             <p>{{ recipe.receptSzoveg }}</p>
             <button type="button" (click)="removeFromFavorites(recipe)">Eltávolítás</button>
           </div>
@@ -87,11 +90,11 @@
     </section>
   }
 
-  @if (statusMessage) {
-    <p class="status-message">{{ statusMessage }}</p>
+  @if (statusMessage()) {
+    <p class="status-message">{{ statusMessage() }}</p>
   }
 
-  @if (errorMessage) {
-    <p class="status-message error">{{ errorMessage }}</p>
+  @if (errorMessage()) {
+    <p class="status-message error">{{ errorMessage() }}</p>
   }
 </main>

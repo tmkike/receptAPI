@@ -37,7 +37,7 @@ backend/
 │   │   └── upload.js       # Multer konfiguráció (kép feltöltés)
 │   ├── routes/
 │   │   ├── auth.routes.js      # /api/login, /api/register
-│   │   ├── recipes.routes.js   # /api/dailyRecipes, /api/addRecept, /api/autocomplete, /api/report
+│   │   ├── recipes.routes.js   # /api/recipes, /api/dailyRecipes, /api/addRecept, /api/autocomplete, /api/report
 │   │   ├── favorites.routes.js # /api/favorites
 │   │   └── profile.routes.js   # /api/getProfile
 │   └── utils/
@@ -218,6 +218,10 @@ export class RecipeService {
 
   getDailyRecipes() {
     return this.http.get(`${this.api}/dailyRecipes`);
+  }
+
+  getRecipes() {
+    return this.http.get(`${this.api}/recipes`);
   }
 
   login(username: string, password: string) {

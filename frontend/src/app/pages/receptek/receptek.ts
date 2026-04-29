@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ApiService, Recipe } from '../../core/api.service';
@@ -17,8 +17,11 @@ type RecipeFilter = {
 export class Receptek implements OnInit {
   filtersOpen = false;
   recipesPerPage = 15;
-  recipes: Recipe[] = [];
-  isLoading = false;
+  currentPage = 1;
+  recipes = signal<Recipe[]>([]);
+  favoriteRecipeIds = new Set<string>();
+  favoriteSavingIds = new Set<string>();
+  isLoading = signal(false);
   errorMessage = '';
   favoriteMessage = '';
   reportMessage = '';
@@ -49,6 +52,7 @@ export class Receptek implements OnInit {
 
   ngOnInit(): void {
     this.loadRecipes();
+    this.loadFavoriteRecipeIds();
   }
 
   toggleFilters(): void {
@@ -59,18 +63,51 @@ export class Receptek implements OnInit {
     filter.active = !filter.active;
   }
 
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.recipes().length / this.recipesPerPage));
+  }
+
+  get pageNumbers(): number[] {
+    return Array.from({ length: this.totalPages }, (_, index) => index + 1);
+  }
+
+  get paginatedRecipes(): Recipe[] {
+    const startIndex = (this.currentPage - 1) * this.recipesPerPage;
+    return this.recipes().slice(startIndex, startIndex + this.recipesPerPage);
+  }
+
+  get shouldShowPagination(): boolean {
+    return this.recipes().length > this.recipesPerPage;
+  }
+
+  get paginationLabel(): string {
+    const totalRecipes = this.recipes().length;
+    const firstRecipeNumber = (this.currentPage - 1) * this.recipesPerPage + 1;
+    const lastRecipeNumber = Math.min(this.currentPage * this.recipesPerPage, totalRecipes);
+    return `${firstRecipeNumber}-${lastRecipeNumber} / ${totalRecipes} recept`;
+  }
+
+  changeRecipesPerPage(): void {
+    this.currentPage = 1;
+  }
+
+  goToPage(page: number): void {
+    this.currentPage = Math.min(Math.max(page, 1), this.totalPages);
+  }
+
   loadRecipes(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.errorMessage = '';
 
-    this.apiService.getDailyRecipes().subscribe({
+    this.apiService.getRecipes().subscribe({
       next: (response) => {
-        this.recipes = response.responseRecipes;
-        this.isLoading = false;
+        this.recipes.set(response.responseRecipes);
+        this.currentPage = 1;
+        this.isLoading.set(false);
       },
       error: () => {
         this.errorMessage = 'A receptek betöltése nem sikerült.';
-        this.isLoading = false;
+        this.isLoading.set(false);
       },
     });
   }
@@ -115,6 +152,82 @@ export class Receptek implements OnInit {
 
   getImageUrl(recipe: Recipe): string {
     return this.apiService.getImageUrl(recipe.receptKepURL);
+  }
+
+  isLoggedIn(): boolean {
+    return Boolean(localStorage.getItem('token'));
+  }
+
+  isFavorite(recipe: Recipe): boolean {
+    return this.favoriteRecipeIds.has(recipe.receptID);
+  }
+
+  isSavingFavorite(recipe: Recipe): boolean {
+    return this.favoriteSavingIds.has(recipe.receptID);
+  }
+
+  toggleFavorite(recipe: Recipe): void {
+    this.favoriteMessage = '';
+    this.reportMessage = '';
+
+    if (!this.isLoggedIn()) {
+      this.favoriteMessage = 'Kedvenchez adáshoz előbb jelentkezz be.';
+      return;
+    }
+
+    if (this.isSavingFavorite(recipe)) {
+      return;
+    }
+
+    this.favoriteSavingIds = new Set(this.favoriteSavingIds).add(recipe.receptID);
+
+    const request = this.isFavorite(recipe)
+      ? this.apiService.removeFavorite(recipe.receptID)
+      : this.apiService.addFavorite(recipe.receptID);
+
+    request.subscribe({
+      next: () => {
+        if (this.isFavorite(recipe)) {
+          const nextIds = new Set(this.favoriteRecipeIds);
+          nextIds.delete(recipe.receptID);
+          this.favoriteRecipeIds = nextIds;
+          this.favoriteMessage = 'A recept kikerült a kedvencek közül.';
+        } else {
+          this.favoriteRecipeIds = new Set(this.favoriteRecipeIds).add(recipe.receptID);
+          this.favoriteMessage = 'A recept bekerült a kedvencek közé.';
+        }
+
+        this.removeSavingFavorite(recipe.receptID);
+      },
+      error: () => {
+        this.favoriteMessage = 'Nem sikerült módosítani a kedvenc állapotot.';
+        this.removeSavingFavorite(recipe.receptID);
+      },
+    });
+  }
+
+  private loadFavoriteRecipeIds(): void {
+    if (!this.isLoggedIn()) {
+      this.favoriteRecipeIds = new Set();
+      return;
+    }
+
+    this.apiService.getFavorites().subscribe({
+      next: (response) => {
+        this.favoriteRecipeIds = new Set(
+          response.responseRecipes.map((recipe) => recipe.receptID),
+        );
+      },
+      error: () => {
+        this.favoriteRecipeIds = new Set();
+      },
+    });
+  }
+
+  private removeSavingFavorite(recipeId: string): void {
+    const nextIds = new Set(this.favoriteSavingIds);
+    nextIds.delete(recipeId);
+    this.favoriteSavingIds = nextIds;
   }
 
   private getReportErrorMessage(errorCode: string | undefined): string {

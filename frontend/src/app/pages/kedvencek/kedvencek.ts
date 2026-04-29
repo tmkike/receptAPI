@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ApiService, Recipe } from '../../core/api.service';
@@ -17,10 +17,10 @@ type FavoriteFilter = {
 export class Kedvencek implements OnInit {
   filtersOpen = false;
   favoritesPerPage = 15;
-  favorites: Recipe[] = [];
-  isLoading = false;
-  statusMessage = '';
-  errorMessage = '';
+  favorites = signal<Recipe[]>([]);
+  isLoading = signal(false);
+  statusMessage = signal('');
+  errorMessage = signal('');
 
   filters: FavoriteFilter[] = [
     { name: 'Saláták', active: true },
@@ -59,39 +59,41 @@ export class Kedvencek implements OnInit {
   }
 
   loadFavorites(): void {
-    this.statusMessage = '';
-    this.errorMessage = '';
+    this.statusMessage.set('');
+    this.errorMessage.set('');
 
     if (!localStorage.getItem('token')) {
-      this.errorMessage = 'A kedvencek megtekintéséhez jelentkezz be.';
+      this.errorMessage.set('A kedvencek megtekintéséhez jelentkezz be.');
       return;
     }
 
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     this.apiService.getFavorites().subscribe({
       next: (response) => {
-        this.favorites = response.responseRecipes;
-        this.isLoading = false;
+        this.favorites.set(response.responseRecipes);
+        this.isLoading.set(false);
       },
       error: () => {
-        this.errorMessage = 'A kedvencek betöltése nem sikerült.';
-        this.isLoading = false;
+        this.errorMessage.set('A kedvencek betöltése nem sikerült.');
+        this.isLoading.set(false);
       },
     });
   }
 
   removeFromFavorites(recipe: Recipe): void {
-    this.statusMessage = '';
-    this.errorMessage = '';
+    this.statusMessage.set('');
+    this.errorMessage.set('');
 
     this.apiService.removeFavorite(recipe.receptID).subscribe({
       next: () => {
-        this.favorites = this.favorites.filter((item) => item.receptID !== recipe.receptID);
-        this.statusMessage = 'A recept kikerült a kedvencek közül.';
+        this.favorites.update((favorites) =>
+          favorites.filter((item) => item.receptID !== recipe.receptID),
+        );
+        this.statusMessage.set('A recept kikerült a kedvencek közül.');
       },
       error: () => {
-        this.errorMessage = 'Nem sikerült eltávolítani a receptet a kedvencekből.';
+        this.errorMessage.set('Nem sikerült eltávolítani a receptet a kedvencekből.');
       },
     });
   }

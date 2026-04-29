@@ -18,14 +18,19 @@ Alap utvonal: /api
 - Mukodes: keresenkent veletlenszeru 5 recept
 - Valasz: {"responseRecipes":[{"receptNev":"...","receptSzoveg":"...","receptKepURL":"...","receptID":"..."}, ...]}
 
-4. POST /api/report
+4. GET /api/recipes
+- Cel: osszes recept lekerese
+- Mukodes: letrehozas szerinti csokkeno sorrendben adja vissza a recepteket
+- Valasz: {"responseRecipes":[{"receptNev":"...","receptSzoveg":"...","receptKepURL":"...","receptID":"..."}, ...]}
+
+5. POST /api/report
 - Cel: recept jelentese
 - Vedelme: JWT kotelezo
 - Keres (JSON): {"receptID":"..."}
 - Sikeres valasz: {"is_reported":"ok"}
 - Dupla jelentes (ugyanaz a felhasznalo + recept): hiba (duplicate_report)
 
-5. POST /api/addRecept
+6. POST /api/addRecept
 - Cel: uj recept rogzitese
 - Vedelme: JWT kotelezo
 - Keres: multipart/form-data
@@ -33,12 +38,12 @@ Alap utvonal: /api
 - Sikeres valasz: {"is_recorded":"yes"}
 - Hibas valasz: {"is_recorded":"no","errorMessage":"..."}
 
-6. POST /api/autocomplete
+7. POST /api/autocomplete
 - Cel: receptnev automatikus kiegeszites
 - Keres (JSON): {"keyword":"..."}
 - Valasz: {"responseRecipes":[{"receptNev":"..."}, ...]}
 
-7. POST /api/favorites
+8. POST /api/favorites
 - Cel: kedvencek kezelese
 - Vedelme: JWT kotelezo minden muvelethez
 - Keres (JSON): {"type":"toFavorite|removeFromfavorite|isFavorite","receptID":"..."}
@@ -47,7 +52,7 @@ Alap utvonal: /api
 - isFavorite valasz: {"responseRecipes":[{"receptID":"..."}, ...]}
 - Hibas valasz: {"favoriteStatus":"error","error":"..."}
 
-8. GET /api/getProfile
+9. GET /api/getProfile
 - Cel: profil adatok lekerese
 - Vedelme: JWT kotelezo
 - Valasz: {"username":"..."}

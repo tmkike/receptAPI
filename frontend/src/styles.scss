@@ -9,3 +9,84 @@ body {
   margin: 0;
   background-color: #eefcff;
 }
+
+.recipes-page .recipe-card {
+  position: relative;
+}
+
+.recipes-page .report-button {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 1;
+  width: 42px;
+  height: 42px;
+  border: 1px solid #9de8e3;
+  border-radius: 50%;
+  background-color: #fff;
+  color: #007f78;
+  cursor: pointer;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.recipes-page .favorite-button.active {
+  background-color: #007f78;
+  color: #fff;
+}
+
+.recipes-page .favorite-button span {
+  margin-right: 6px;
+  font-size: 18px;
+}
+
+.recipes-page .recipe-time,
+.favorites-page .recipe-time {
+  min-height: 0;
+  color: #007f78;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.recipes-page .pagination {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 24px;
+  font-weight: 800;
+}
+
+.recipes-page .pagination.bottom {
+  margin-top: 18px;
+}
+
+.recipes-page .pagination-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.recipes-page .pagination button {
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid #9de8e3;
+  border-radius: 999px;
+  background-color: #fff;
+  color: #102c2a;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+}
+
+.recipes-page .pagination button.active {
+  border-color: #007f78;
+  background-color: #007f78;
+  color: #fff;
+}
+
+.recipes-page .pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}

@@ -5,6 +5,16 @@ const { upload } = require('../middleware/upload');
 
 const router = express.Router();
 
+function mapRecipe(row) {
+  return {
+    receptNev: row.name,
+    receptSzoveg: row.text,
+    receptKepURL: row.image_url,
+    receptID: String(row.id),
+    receptIdo: row.prep_time || '',
+  };
+}
+
 function parseIngredients(rawValue) {
   if (!rawValue) {
     return [];
@@ -31,21 +41,24 @@ function parseIngredients(rawValue) {
   return raw.split(',').map((item) => item.trim()).filter(Boolean);
 }
 
-router.get('/dailyRecipes', (_req, res) => {
+router.get('/recipes', (_req, res) => {
   const rows = db
     .prepare(
-      "SELECT id, name, text, COALESCE(image_url, '') AS image_url FROM recipes ORDER BY RANDOM() LIMIT 5"
+      "SELECT id, name, text, COALESCE(image_url, '') AS image_url, COALESCE(prep_time, '') AS prep_time FROM recipes ORDER BY created_at DESC, id DESC"
     )
     .all();
 
-  const responseRecipes = rows.map((row) => ({
-    receptNev: row.name,
-    receptSzoveg: row.text,
-    receptKepURL: row.image_url,
-    receptID: String(row.id),
-  }));
+  return res.json({ responseRecipes: rows.map(mapRecipe) });
+});
 
-  return res.json({ responseRecipes });
+router.get('/dailyRecipes', (_req, res) => {
+  const rows = db
+    .prepare(
+      "SELECT id, name, text, COALESCE(image_url, '') AS image_url, COALESCE(prep_time, '') AS prep_time FROM recipes ORDER BY RANDOM() LIMIT 5"
+    )
+    .all();
+
+  return res.json({ responseRecipes: rows.map(mapRecipe) });
 });
 
 router.post('/report', requireAuth, (req, res) => {
