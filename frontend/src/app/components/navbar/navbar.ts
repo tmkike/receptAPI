@@ -48,14 +48,19 @@ export class NavbarComponent implements OnInit {
   }
 
   onSearch(): void {
+    const keyword = this.searchText.trim();
     this.suggestions = [];
-    this.router.navigate(['/receptek']);
+    this.router.navigate(['/receptek'], {
+      queryParams: keyword ? { kereses: keyword } : {},
+    });
   }
 
   selectSuggestion(recipeName: string): void {
     this.searchText = recipeName;
     this.suggestions = [];
-    this.router.navigate(['/receptek']);
+    this.router.navigate(['/receptek'], {
+      queryParams: { kereses: recipeName },
+    });
   }
 
   logout(): void {

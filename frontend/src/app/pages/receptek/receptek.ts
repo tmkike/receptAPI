@@ -1,6 +1,6 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ApiService, Recipe } from '../../core/api.service';
 
 type RecipeFilter = {
@@ -18,7 +18,21 @@ export class Receptek implements OnInit {
   filtersOpen = false;
   recipesPerPage = 15;
   currentPage = 1;
-  recipes = signal<Recipe[]>([]);
+  allRecipes = signal<Recipe[]>([]);
+  searchTerm = signal('');
+  recipes = computed(() => {
+    const normalizedSearch = this.normalizeText(this.searchTerm());
+
+    if (!normalizedSearch) {
+      return this.allRecipes();
+    }
+
+    return this.allRecipes().filter((recipe) => {
+      const recipeName = this.normalizeText(recipe.receptNev);
+      const recipeText = this.normalizeText(recipe.receptSzoveg);
+      return recipeName.includes(normalizedSearch) || recipeText.includes(normalizedSearch);
+    });
+  });
   favoriteRecipeIds = new Set<string>();
   favoriteSavingIds = new Set<string>();
   isLoading = signal(false);
@@ -48,9 +62,16 @@ export class Receptek implements OnInit {
     { name: 'Köretek', active: true },
   ];
 
-  constructor(private readonly apiService: ApiService) {}
+  constructor(
+    private readonly apiService: ApiService,
+    private readonly route: ActivatedRoute,
+  ) {}
 
   ngOnInit(): void {
+    this.route.queryParamMap.subscribe((params) => {
+      this.searchTerm.set((params.get('kereses') || '').trim());
+      this.currentPage = 1;
+    });
     this.loadRecipes();
     this.loadFavoriteRecipeIds();
   }
@@ -101,7 +122,7 @@ export class Receptek implements OnInit {
 
     this.apiService.getRecipes().subscribe({
       next: (response) => {
-        this.recipes.set(response.responseRecipes);
+        this.allRecipes.set(response.responseRecipes);
         this.currentPage = 1;
         this.isLoading.set(false);
       },
@@ -228,6 +249,10 @@ export class Receptek implements OnInit {
     const nextIds = new Set(this.favoriteSavingIds);
     nextIds.delete(recipeId);
     this.favoriteSavingIds = nextIds;
+  }
+
+  private normalizeText(value: string): string {
+    return value.trim().toLocaleLowerCase('hu-HU');
   }
 
   private getReportErrorMessage(errorCode: string | undefined): string {
