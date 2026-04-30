@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 
 export type AuthResponse = {
@@ -13,6 +13,7 @@ export type Recipe = {
   receptKepURL: string;
   receptID: string;
   receptIdo?: string;
+  receptKategoria?: string;
 };
 
 export type AutocompleteRecipe = {
@@ -44,8 +45,16 @@ export class ApiService {
     return this.http.get<{ responseRecipes: Recipe[] }>(`${this.apiUrl}/dailyRecipes`);
   }
 
-  getRecipes() {
-    return this.http.get<{ responseRecipes: Recipe[] }>(`${this.apiUrl}/recipes`);
+  getCategories() {
+    return this.http.get<{ categories: { name: string; count: number }[] }>(`${this.apiUrl}/categories`);
+  }
+
+  getRecipes(categories: string[] = []) {
+    const params = categories.length
+      ? new HttpParams().set('categories', categories.join(','))
+      : undefined;
+
+    return this.http.get<{ responseRecipes: Recipe[] }>(`${this.apiUrl}/recipes`, { params });
   }
 
   addFavorite(receptID: string) {

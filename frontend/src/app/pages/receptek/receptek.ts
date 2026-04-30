@@ -40,39 +40,23 @@ export class Receptek implements OnInit {
   favoriteMessage = '';
   reportMessage = '';
 
-  filters: RecipeFilter[] = [
-    { name: 'Saláták', active: true },
-    { name: 'Streetfood', active: true },
-    { name: 'Vegetáriánus', active: true },
-    { name: 'Vegán ételek', active: true },
-    { name: 'Édes sütemények', active: true },
-    { name: 'Sós sütemények', active: true },
-    { name: 'Tésztafélék', active: true },
-    { name: 'Savanyúságok', active: true },
-    { name: 'Kenyérfélék', active: true },
-    { name: 'Főzelék', active: true },
-    { name: 'Levesek', active: true },
-    { name: 'Halételek', active: true },
-    { name: 'Marhaételek', active: true },
-    { name: 'Sertésételek', active: true },
-    { name: 'Csirkeételek', active: true },
-    { name: 'Borjúételek', active: true },
-    { name: 'Egyéb húsfélék', active: true },
-    { name: 'Grill/Kerti ételek', active: true },
-    { name: 'Köretek', active: true },
-  ];
+  filters: RecipeFilter[] = [];
 
   constructor(
     private readonly apiService: ApiService,
     private readonly route: ActivatedRoute,
   ) {}
 
+  get hasActiveFilters(): boolean {
+    return this.filters.some((f) => f.active);
+  }
+
   ngOnInit(): void {
     this.route.queryParamMap.subscribe((params) => {
       this.searchTerm.set((params.get('kereses') || '').trim());
       this.currentPage = 1;
     });
-    this.loadRecipes();
+    this.loadCategories();
     this.loadFavoriteRecipeIds();
   }
 
@@ -82,6 +66,14 @@ export class Receptek implements OnInit {
 
   toggleFilter(filter: RecipeFilter): void {
     filter.active = !filter.active;
+    this.currentPage = 1;
+    this.loadRecipes();
+  }
+
+  clearFilters(): void {
+    this.filters.forEach((f) => (f.active = false));
+    this.currentPage = 1;
+    this.loadRecipes();
   }
 
   get totalPages(): number {
@@ -116,11 +108,26 @@ export class Receptek implements OnInit {
     this.currentPage = Math.min(Math.max(page, 1), this.totalPages);
   }
 
+  loadCategories(): void {
+    this.apiService.getCategories().subscribe({
+      next: (response) => {
+        this.filters = response.categories.map((c) => ({ name: c.name, active: false }));
+        this.loadRecipes();
+      },
+      error: () => {
+        this.loadRecipes();
+      },
+    });
+  }
+
   loadRecipes(): void {
+    const activeFilterNames = this.getActiveFilterNames();
+
     this.isLoading.set(true);
     this.errorMessage = '';
 
-    this.apiService.getRecipes().subscribe({
+    // Ha nincs aktív filter, mindent betöltünk (üres categories = minden)
+    this.apiService.getRecipes(activeFilterNames).subscribe({
       next: (response) => {
         this.allRecipes.set(response.responseRecipes);
         this.currentPage = 1;
@@ -253,6 +260,10 @@ export class Receptek implements OnInit {
 
   private normalizeText(value: string): string {
     return value.trim().toLocaleLowerCase('hu-HU');
+  }
+
+  private getActiveFilterNames(): string[] {
+    return this.filters.filter((f) => f.active).map((f) => f.name);
   }
 
   private getReportErrorMessage(errorCode: string | undefined): string {

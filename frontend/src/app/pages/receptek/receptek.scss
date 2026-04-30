@@ -185,6 +185,17 @@ h1 {
   color: #fff;
 }
 
+.filter-chip.clear-filters {
+  border-color: #c0392b;
+  background-color: #fff;
+  color: #c0392b;
+
+  &:hover {
+    background-color: #c0392b;
+    color: #fff;
+  }
+}
+
 .recipe-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -215,6 +226,20 @@ h1 {
 .recipe-card h2 {
   margin: 0;
   font-size: 21px;
+}
+
+.recipe-category {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 28px;
+  margin: 0;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background-color: #e9fbf9;
+  color: #006b65;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.2;
 }
 
 .recipe-card p {

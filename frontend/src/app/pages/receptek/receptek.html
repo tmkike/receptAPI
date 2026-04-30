@@ -50,6 +50,11 @@
             {{ filter.name }}
           </button>
         }
+        @if (hasActiveFilters) {
+          <button class="filter-chip clear-filters" type="button" (click)="clearFilters()">
+            Szűrők törlése ✕
+          </button>
+        }
       </div>
     }
   </section>
@@ -107,6 +112,9 @@
 
           <div class="recipe-card-content">
             <h2>{{ recipe.receptNev }}</h2>
+            @if (recipe.receptKategoria) {
+              <p class="recipe-category">{{ recipe.receptKategoria }}</p>
+            }
             @if (recipe.receptIdo) {
               <p class="recipe-time">{{ recipe.receptIdo }}</p>
             }
