@@ -228,8 +228,9 @@ h1 {
   font-size: 21px;
 }
 
-.recipe-category {
+.recipe-card .recipe-category {
   display: inline-flex;
+  align-items: center;
   width: fit-content;
   min-height: 28px;
   margin: 0;
@@ -243,11 +244,14 @@ h1 {
 }
 
 .recipe-card p {
-  min-height: 76px;
   margin: 0;
   overflow: hidden;
   color: #3d3d3d;
   line-height: 1.6;
+}
+
+.recipe-card-content > p:not(.recipe-category, .recipe-time) {
+  min-height: 76px;
 }
 
 .recipe-actions {
