@@ -33,8 +33,8 @@ export class Receptek implements OnInit {
       return recipeName.includes(normalizedSearch) || recipeText.includes(normalizedSearch);
     });
   });
-  favoriteRecipeIds = new Set<string>();
-  favoriteSavingIds = new Set<string>();
+  favoriteRecipeIds = signal<Set<string>>(new Set());
+  favoriteSavingIds = signal<Set<string>>(new Set());
   isLoading = signal(false);
   errorMessage = '';
   favoriteMessage = '';
@@ -187,11 +187,11 @@ export class Receptek implements OnInit {
   }
 
   isFavorite(recipe: Recipe): boolean {
-    return this.favoriteRecipeIds.has(recipe.receptID);
+    return this.favoriteRecipeIds().has(recipe.receptID);
   }
 
   isSavingFavorite(recipe: Recipe): boolean {
-    return this.favoriteSavingIds.has(recipe.receptID);
+    return this.favoriteSavingIds().has(recipe.receptID);
   }
 
   toggleFavorite(recipe: Recipe): void {
@@ -207,27 +207,26 @@ export class Receptek implements OnInit {
       return;
     }
 
-    this.favoriteSavingIds = new Set(this.favoriteSavingIds).add(recipe.receptID);
+    const wasFavorite = this.isFavorite(recipe);
+    this.favoriteSavingIds.update((ids) => new Set(ids).add(recipe.receptID));
+    this.setFavoriteState(recipe.receptID, !wasFavorite);
 
-    const request = this.isFavorite(recipe)
+    const request = wasFavorite
       ? this.apiService.removeFavorite(recipe.receptID)
       : this.apiService.addFavorite(recipe.receptID);
 
     request.subscribe({
       next: () => {
-        if (this.isFavorite(recipe)) {
-          const nextIds = new Set(this.favoriteRecipeIds);
-          nextIds.delete(recipe.receptID);
-          this.favoriteRecipeIds = nextIds;
+        if (wasFavorite) {
           this.favoriteMessage = 'A recept kikerült a kedvencek közül.';
         } else {
-          this.favoriteRecipeIds = new Set(this.favoriteRecipeIds).add(recipe.receptID);
           this.favoriteMessage = 'A recept bekerült a kedvencek közé.';
         }
 
         this.removeSavingFavorite(recipe.receptID);
       },
       error: () => {
+        this.setFavoriteState(recipe.receptID, wasFavorite);
         this.favoriteMessage = 'Nem sikerült módosítani a kedvenc állapotot.';
         this.removeSavingFavorite(recipe.receptID);
       },
@@ -236,26 +235,42 @@ export class Receptek implements OnInit {
 
   private loadFavoriteRecipeIds(): void {
     if (!this.isLoggedIn()) {
-      this.favoriteRecipeIds = new Set();
+      this.favoriteRecipeIds.set(new Set());
       return;
     }
 
     this.apiService.getFavorites().subscribe({
       next: (response) => {
-        this.favoriteRecipeIds = new Set(
+        this.favoriteRecipeIds.set(new Set(
           response.responseRecipes.map((recipe) => recipe.receptID),
-        );
+        ));
       },
       error: () => {
-        this.favoriteRecipeIds = new Set();
+        this.favoriteRecipeIds.set(new Set());
       },
     });
   }
 
+  private setFavoriteState(recipeId: string, isFavorite: boolean): void {
+    this.favoriteRecipeIds.update((ids) => {
+      const nextIds = new Set(ids);
+
+      if (isFavorite) {
+        nextIds.add(recipeId);
+      } else {
+        nextIds.delete(recipeId);
+      }
+
+      return nextIds;
+    });
+  }
+
   private removeSavingFavorite(recipeId: string): void {
-    const nextIds = new Set(this.favoriteSavingIds);
-    nextIds.delete(recipeId);
-    this.favoriteSavingIds = nextIds;
+    this.favoriteSavingIds.update((ids) => {
+      const nextIds = new Set(ids);
+      nextIds.delete(recipeId);
+      return nextIds;
+    });
   }
 
   private normalizeText(value: string): string {

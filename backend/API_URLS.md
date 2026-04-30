@@ -34,7 +34,7 @@ Alap utvonal: /api
 - Cel: uj recept rogzitese
 - Vedelme: JWT kotelezo
 - Keres: multipart/form-data
-- Mezok: receptNev, receptSzoveg, receptIdo, hozzavalok[] + kep (field: kep)
+- Mezok: receptNev, receptSzoveg, receptIdo, receptKategoria, hozzavalok[] + kep (field: kep)
 - Sikeres valasz: {"is_recorded":"yes"}
 - Hibas valasz: {"is_recorded":"no","errorMessage":"..."}
 

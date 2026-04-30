@@ -15,6 +15,28 @@ export class Hozzaad {
   recipeName = '';
   cookingTime: number | null = null;
   description = '';
+  categories = [
+    'Saláták',
+    'Streetfood',
+    'Vegetáriánus',
+    'Vegán ételek',
+    'Édes sütemények',
+    'Sós sütemények',
+    'Tésztafélék',
+    'Savanyúságok',
+    'Kenyérfélék',
+    'Főzelék',
+    'Levesek',
+    'Halételek',
+    'Marhaételek',
+    'Sertésételek',
+    'Csirkeételek',
+    'Borjúételek',
+    'Egyébb húsfélék',
+    'Grill/Kerti ételek',
+    'köretek',
+  ];
+  selectedCategory = '';
   selectedImageName = '';
   selectedImage: File | null = null;
   isSubmitting = false;
@@ -22,6 +44,18 @@ export class Hozzaad {
   errorMessage = '';
 
   constructor(private readonly apiService: ApiService) {}
+
+  get canSaveRecipe(): boolean {
+    return Boolean(
+      this.isLoggedIn &&
+        !this.isSubmitting &&
+        this.recipeName.trim() &&
+        this.description.trim() &&
+        this.cookingTime &&
+        this.selectedCategory &&
+        this.selectedImage,
+    );
+  }
 
   onImageSelected(event: Event): void {
     if (!this.isLoggedIn) {
@@ -40,6 +74,7 @@ export class Hozzaad {
     this.recipeName = '';
     this.cookingTime = null;
     this.description = '';
+    this.selectedCategory = '';
     this.selectedImageName = '';
     this.selectedImage = null;
     this.clearMessages();
@@ -58,8 +93,15 @@ export class Hozzaad {
       return;
     }
 
-    if (!this.recipeName.trim() || !this.description.trim() || !this.cookingTime) {
-      this.errorMessage = 'Töltsd ki a recept nevét, az elkészítési időt és a leírást.';
+    if (
+      !this.recipeName.trim() ||
+      !this.description.trim() ||
+      !this.cookingTime ||
+      !this.selectedCategory ||
+      !this.selectedImage
+    ) {
+      this.errorMessage =
+        'Töltsd ki a recept nevét, tölts fel képet, válassz kategóriát, add meg az elkészítési időt és a leírást.';
       return;
     }
 
@@ -71,6 +113,7 @@ export class Hozzaad {
     formData.append('receptNev', this.recipeName.trim());
     formData.append('receptSzoveg', this.description.trim());
     formData.append('receptIdo', String(this.cookingTime));
+    formData.append('receptKategoria', this.selectedCategory);
     formData.append('hozzavalok', JSON.stringify([]));
 
     if (this.selectedImage) {
@@ -103,7 +146,7 @@ export class Hozzaad {
     }
 
     if (errorCode === 'missing_required_fields') {
-      return 'Töltsd ki a recept nevét, az elkészítési időt és a leírást.';
+      return 'Töltsd ki a recept nevét, tölts fel képet, válassz kategóriát, add meg az elkészítési időt és a leírást.';
     }
 
     return 'A recept mentése nem sikerült. Próbáld újra később.';

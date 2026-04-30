@@ -71,6 +71,7 @@ h1 {
 }
 
 .recipe-form input,
+.recipe-form select,
 .recipe-form textarea {
   width: 100%;
   border: 1px solid #9de8e3;
@@ -88,6 +89,12 @@ h1 {
   padding: 0 14px;
 }
 
+.recipe-form select {
+  min-height: 48px;
+  padding: 0 42px 0 14px;
+  cursor: pointer;
+}
+
 .recipe-form textarea {
   min-height: 160px;
   padding: 14px;
@@ -95,6 +102,7 @@ h1 {
 }
 
 .recipe-form input:focus,
+.recipe-form select:focus,
 .recipe-form textarea:focus {
   border-color: #00b8ad;
   box-shadow: 0 0 0 3px rgba(0, 184, 173, 0.18);

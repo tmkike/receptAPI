@@ -44,6 +44,19 @@
         />
       </div>
 
+      <label for="recipeCategory">Kategória</label>
+      <select
+        id="recipeCategory"
+        name="recipeCategory"
+        [(ngModel)]="selectedCategory"
+        [disabled]="!isLoggedIn"
+      >
+        <option value="" disabled>Válassz kategóriát</option>
+        @for (category of categories; track category) {
+          <option [value]="category">{{ category }}</option>
+        }
+      </select>
+
       <label for="cookingTime">Elkészítési idő</label>
       <div class="time-input" [class.disabled]="!isLoggedIn">
         <input
@@ -77,7 +90,7 @@
         >
           Meggondoltam
         </button>
-        <button class="primary-button" type="submit" [disabled]="!isLoggedIn || isSubmitting">
+        <button class="primary-button" type="submit" [disabled]="!canSaveRecipe">
           {{ isSubmitting ? 'Mentés...' : 'Mentés' }}
         </button>
       </div>
