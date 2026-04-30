@@ -51,6 +51,43 @@ function runMigrations(database = db) {
     CREATE INDEX IF NOT EXISTS idx_favorites_user ON favorites(user_id);
     CREATE INDEX IF NOT EXISTS idx_reports_user ON reports(user_id);
   `);
+
+  const recipeColumns = database.prepare('PRAGMA table_info(recipes)').all();
+  const hasCategoryColumn = recipeColumns.some((column) => column.name === 'category');
+
+  if (!hasCategoryColumn) {
+    database.exec("ALTER TABLE recipes ADD COLUMN category TEXT DEFAULT 'Egyéb húsfélék'");
+  }
+
+  database.exec(`
+    UPDATE recipes
+    SET category = CASE name
+      WHEN 'Sajtos teszta' THEN 'Tésztafélék'
+      WHEN 'Paradicsomos leves' THEN 'Levesek'
+      WHEN 'Rantotta' THEN 'Vegetáriánus'
+      WHEN 'Csirkeporkolt' THEN 'Csirkeételek'
+      WHEN 'Gombas rizotto' THEN 'Vegetáriánus'
+      WHEN 'Palacsinta' THEN 'Édes sütemények'
+      WHEN 'Lencseleves' THEN 'Levesek'
+      WHEN 'Tojasos nokedli' THEN 'Tésztafélék'
+      WHEN 'Rakott krumpli' THEN 'Köretek'
+      WHEN 'Gulyasleves' THEN 'Marhaételek'
+      WHEN 'Lecsó' THEN 'Vegetáriánus'
+      WHEN 'Bundas kenyer' THEN 'Sós sütemények'
+      WHEN 'Toltott paprika' THEN 'Sertésételek'
+      WHEN 'Zoldborsofelem' THEN 'Főzelék'
+      WHEN 'Magyaros csirkemell' THEN 'Csirkeételek'
+      WHEN 'Soska fozelek' THEN 'Főzelék'
+      WHEN 'Halaszle' THEN 'Halételek'
+      WHEN 'Káposztas teszta' THEN 'Tésztafélék'
+      WHEN 'Fokhagymas gomba' THEN 'Vegetáriánus'
+      WHEN 'Sult csirkecomb' THEN 'Csirkeételek'
+      ELSE 'Egyéb húsfélék'
+    END
+    WHERE category IS NULL OR TRIM(category) = '' OR category = 'Egyeb';
+
+    CREATE INDEX IF NOT EXISTS idx_recipes_category ON recipes(category);
+  `);
 }
 
 if (require.main === module) {

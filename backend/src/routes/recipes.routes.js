@@ -12,7 +12,23 @@ function mapRecipe(row) {
     receptKepURL: row.image_url,
     receptID: String(row.id),
     receptIdo: row.prep_time || '',
+    receptKategoria: row.category || '',
   };
+}
+
+function parseCategoryFilters(rawValue) {
+  if (!rawValue) {
+    return [];
+  }
+
+  if (Array.isArray(rawValue)) {
+    return rawValue.map((item) => String(item).trim()).filter(Boolean);
+  }
+
+  return String(rawValue)
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
 }
 
 function parseIngredients(rawValue) {
@@ -41,12 +57,29 @@ function parseIngredients(rawValue) {
   return raw.split(',').map((item) => item.trim()).filter(Boolean);
 }
 
-router.get('/recipes', (_req, res) => {
+router.get('/categories', (_req, res) => {
   const rows = db
     .prepare(
-      "SELECT id, name, text, COALESCE(image_url, '') AS image_url, COALESCE(prep_time, '') AS prep_time FROM recipes ORDER BY created_at DESC, id DESC"
+      "SELECT category, COUNT(*) as count FROM recipes WHERE category IS NOT NULL AND category != '' GROUP BY category ORDER BY category ASC"
     )
     .all();
+
+  return res.json({ categories: rows.map((r) => ({ name: r.category, count: r.count })) });
+});
+
+router.get('/recipes', (_req, res) => {
+  const categories = parseCategoryFilters(_req.query.categories || _req.query.category);
+
+  const baseQuery =
+    "SELECT id, name, text, COALESCE(image_url, '') AS image_url, COALESCE(prep_time, '') AS prep_time, COALESCE(category, '') AS category FROM recipes";
+
+  const rows = categories.length
+    ? db
+        .prepare(
+          `${baseQuery} WHERE category IN (${categories.map(() => '?').join(', ')}) ORDER BY created_at DESC, id DESC`
+        )
+        .all(...categories)
+    : db.prepare(`${baseQuery} ORDER BY created_at DESC, id DESC`).all();
 
   return res.json({ responseRecipes: rows.map(mapRecipe) });
 });
@@ -54,7 +87,7 @@ router.get('/recipes', (_req, res) => {
 router.get('/dailyRecipes', (_req, res) => {
   const rows = db
     .prepare(
-      "SELECT id, name, text, COALESCE(image_url, '') AS image_url, COALESCE(prep_time, '') AS prep_time FROM recipes ORDER BY RANDOM() LIMIT 5"
+      "SELECT id, name, text, COALESCE(image_url, '') AS image_url, COALESCE(prep_time, '') AS prep_time, COALESCE(category, '') AS category FROM recipes ORDER BY RANDOM() LIMIT 5"
     )
     .all();
 
@@ -88,7 +121,7 @@ router.post('/report', requireAuth, (req, res) => {
 });
 
 router.post('/addRecept', requireAuth, upload.single('kep'), (req, res) => {
-  const { receptNev, receptSzoveg, receptIdo } = req.body || {};
+  const { receptNev, receptSzoveg, receptIdo, receptKategoria } = req.body || {};
   const hozzavalok = parseIngredients(req.body ? req.body.hozzavalok : null);
 
   if (!receptNev || !receptSzoveg || !receptIdo) {
@@ -100,7 +133,7 @@ router.post('/addRecept', requireAuth, upload.single('kep'), (req, res) => {
   const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
 
   const insertRecipe = db.prepare(
-    'INSERT INTO recipes (name, text, image_url, prep_time, user_id) VALUES (?, ?, ?, ?, ?)'
+    'INSERT INTO recipes (name, text, image_url, prep_time, category, user_id) VALUES (?, ?, ?, ?, ?, ?)'
   );
 
   const insertIngredient = db.prepare(
@@ -113,6 +146,7 @@ router.post('/addRecept', requireAuth, upload.single('kep'), (req, res) => {
       String(receptSzoveg).trim(),
       imageUrl,
       String(receptIdo).trim(),
+      String(receptKategoria || 'Egyéb húsfélék').trim(),
       req.user.userid
     );
 
