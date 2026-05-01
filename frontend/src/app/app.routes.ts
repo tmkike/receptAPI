@@ -5,6 +5,7 @@ import { Kedvencek } from './pages/kedvencek/kedvencek';
 import { Kezdooldal } from './pages/kezdooldal/kezdooldal';
 import { Receptek } from './pages/receptek/receptek';
 import { Regisztracio } from './pages/regisztracio/regisztracio';
+import { ElfelejtettJelszo } from './pages/elfelejtett-jelszo/elfelejtett-jelszo';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'kezdooldal', pathMatch: 'full' },
@@ -13,6 +14,7 @@ export const routes: Routes = [
   { path: 'kedvencek', component: Kedvencek },
   { path: 'hozzaad', component: Hozzaad },
   { path: 'bejelentkezes', component: Bejelentkezes },
+  { path: 'elfelejtett-jelszo', component: ElfelejtettJelszo },
   { path: 'regisztracio', component: Regisztracio },
   { path: '**', redirectTo: 'kezdooldal' },
 ];

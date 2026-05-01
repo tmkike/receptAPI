@@ -64,4 +64,32 @@ router.post('/login', async (req, res) => {
   return res.json({ token, userid });
 });
 
+router.post('/reset-password', async (req, res) => {
+  const { username, password } = req.body || {};
+
+  if (!username || !password) {
+    return res.status(400).json({ is_updated: 'no', error: 'missing_credentials' });
+  }
+
+  if (String(password).length < 6) {
+    return res.status(400).json({ is_updated: 'no', error: 'password_too_short' });
+  }
+
+  const trimmedUsername = String(username).trim();
+  const user = db.prepare('SELECT id FROM users WHERE username = ?').get(trimmedUsername);
+
+  if (!user) {
+    return res.status(404).json({ is_updated: 'no', error: 'user_not_found' });
+  }
+
+  try {
+    const passwordHash = await bcrypt.hash(String(password), 10);
+    db.prepare('UPDATE users SET password_hash = ? WHERE id = ?').run(passwordHash, user.id);
+
+    return res.json({ is_updated: 'yes' });
+  } catch (error) {
+    return res.status(500).json({ is_updated: 'no', error: 'password_reset_failed' });
+  }
+});
+
 module.exports = router;

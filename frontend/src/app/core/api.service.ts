@@ -35,6 +35,13 @@ export class ApiService {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, { username, password });
   }
 
+  resetPassword(username: string, password: string) {
+    return this.http.post<{ is_updated: 'yes' | 'no'; error?: string }>(
+      `${this.apiUrl}/reset-password`,
+      { username, password },
+    );
+  }
+
   addRecipe(formData: FormData) {
     return this.http.post<{ is_recorded: 'yes' | 'no'; errorMessage?: string }>(
       `${this.apiUrl}/addRecept`,

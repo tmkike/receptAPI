@@ -1,0 +1,78 @@
+<main class="reset-page">
+  <section class="reset-card">
+    <div class="reset-copy">
+      <p class="eyebrow">Elfelejtett jelszó</p>
+      <h1>Állíts be új jelszót a fiókodhoz</h1>
+      <p>
+        Add meg a regisztrációnál használt e-mail címedet, majd írd be az új
+        jelszót kétszer. Ha találunk ilyen fiókot, lecseréljük a jelszót.
+      </p>
+    </div>
+
+    <form class="reset-form" (ngSubmit)="resetPassword()">
+      <label for="email">E-mail cím</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        placeholder="pelda@email.hu"
+        [(ngModel)]="email"
+        (ngModelChange)="onEmailChange()"
+        (blur)="validateEmail()"
+        [class.input-error]="emailInvalid"
+      />
+
+      @if (emailTouched && emailInvalid) {
+        <p class="error-message">Adj meg egy érvényes e-mail címet.</p>
+      }
+
+      <label for="password">Új jelszó</label>
+      <input
+        id="password"
+        name="password"
+        type="password"
+        placeholder="Adj meg egy új jelszót"
+        [(ngModel)]="password"
+        (ngModelChange)="onPasswordChange()"
+      />
+      <p class="helper-text">Minimum 6 karakternek kell lennie.</p>
+
+      <label for="passwordAgain">Új jelszó újra</label>
+      <input
+        id="passwordAgain"
+        name="passwordAgain"
+        type="password"
+        placeholder="Írd be még egyszer az új jelszót"
+        [(ngModel)]="passwordAgain"
+        (ngModelChange)="onPasswordChange()"
+        (blur)="validatePasswords()"
+        [class.input-error]="passwordMismatch"
+      />
+
+      @if (passwordAgainTouched && passwordMismatch) {
+        <p class="error-message">Nem egyezik a két jelszó.</p>
+      }
+
+      @if (passwordTooShort) {
+        <p class="error-message">A jelszónak legalább 6 karakter hosszúnak kell lennie.</p>
+      }
+
+      <button type="submit" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Mentés...' : 'Új jelszó mentése' }}
+      </button>
+
+      @if (successMessage) {
+        <p class="success-message">{{ successMessage }}</p>
+      }
+
+      @if (errorMessage) {
+        <p class="error-message center-message">{{ errorMessage }}</p>
+      }
+
+      <p class="login-text">
+        Eszedbe jutott?
+        <a routerLink="/bejelentkezes">Jelentkezz be</a>
+      </p>
+    </form>
+  </section>
+</main>
