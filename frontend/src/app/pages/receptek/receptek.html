@@ -166,6 +166,12 @@
         </div>
       </nav>
     }
+  } @else if (hasSearchTerm) {
+    <section class="empty-state" aria-label="Nincs találat">
+      <div class="empty-icon" aria-hidden="true">+</div>
+      <h2>Nincs találat</h2>
+      <p>Próbálj meg másik keresőkifejezést megadni.</p>
+    </section>
   } @else {
     <section class="empty-state" aria-label="Nincs megjeleníthető recept">
       <div class="empty-icon" aria-hidden="true">+</div>

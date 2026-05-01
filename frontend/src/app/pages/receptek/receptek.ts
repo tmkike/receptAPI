@@ -51,6 +51,10 @@ export class Receptek implements OnInit {
     return this.filters.some((f) => f.active);
   }
 
+  get hasSearchTerm(): boolean {
+    return Boolean(this.searchTerm().trim());
+  }
+
   ngOnInit(): void {
     this.route.queryParamMap.subscribe((params) => {
       this.searchTerm.set((params.get('kereses') || '').trim());
