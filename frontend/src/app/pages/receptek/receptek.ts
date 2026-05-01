@@ -194,6 +194,14 @@ export class Receptek implements OnInit {
     return this.favoriteSavingIds().has(recipe.receptID);
   }
 
+  favoriteButtonText(recipe: Recipe): string {
+    if (!this.isLoggedIn()) {
+      return 'Jelentkezz be';
+    }
+
+    return this.isFavorite(recipe) ? 'Kedvencekből kivétel' : 'Kedvencekhez adás';
+  }
+
   toggleFavorite(recipe: Recipe): void {
     this.favoriteMessage = '';
     this.reportMessage = '';

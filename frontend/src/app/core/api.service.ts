@@ -5,6 +5,7 @@ export type AuthResponse = {
   token: string;
   userid: string;
   is_valid?: 'ok' | 'no';
+  error?: string;
 };
 
 export type Recipe = {

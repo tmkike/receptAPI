@@ -97,6 +97,7 @@
     <section class="recipe-grid" aria-label="Megjeleníthető receptek">
       @for (recipe of paginatedRecipes; track recipe.receptID) {
         <article class="recipe-card">
+          @if (isLoggedIn()) {
           <button
             class="report-button"
             type="button"
@@ -106,6 +107,7 @@
           >
             &#128078;
           </button>
+          }
 
           @if (getImageUrl(recipe)) {
             <img [src]="getImageUrl(recipe)" [alt]="recipe.receptNev" />
@@ -129,7 +131,7 @@
                 [disabled]="isSavingFavorite(recipe)"
               >
                 <span aria-hidden="true">{{ isFavorite(recipe) ? '♥' : '♡' }}</span>
-                {{ isFavorite(recipe) ? 'Kedvencekből kivétel' : 'Kedvencekhez adás' }}
+                {{ favoriteButtonText(recipe) }}
               </button>
             </div>
           </div>

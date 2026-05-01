@@ -18,6 +18,8 @@
         placeholder="pelda@email.hu"
         [(ngModel)]="email"
         (ngModelChange)="clearMessages()"
+        [attr.aria-invalid]="errorMessage() ? 'true' : null"
+        [attr.aria-describedby]="errorMessage() ? 'loginError' : null"
       />
 
       <label for="password">Jelszó</label>
@@ -28,6 +30,8 @@
         placeholder="Add meg a jelszavad"
         [(ngModel)]="password"
         (ngModelChange)="clearMessages()"
+        [attr.aria-invalid]="errorMessage() ? 'true' : null"
+        [attr.aria-describedby]="errorMessage() ? 'loginError' : null"
       />
 
       <div class="form-row">
@@ -38,12 +42,12 @@
         <a href="#">Elfelejtett jelszó?</a>
       </div>
 
-      <button type="submit" [disabled]="isSubmitting">
-        {{ isSubmitting ? 'Bejelentkezés...' : 'Bejelentkezés' }}
+      <button type="submit" [disabled]="isSubmitting()">
+        {{ isSubmitting() ? 'Bejelentkezés...' : 'Bejelentkezés' }}
       </button>
 
-      @if (errorMessage) {
-        <p class="error-message">{{ errorMessage }}</p>
+      @if (errorMessage()) {
+        <p id="loginError" class="error-message" role="alert">{{ errorMessage() }}</p>
       }
 
       <p class="register-text">

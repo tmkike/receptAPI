@@ -79,7 +79,7 @@ export class Regisztracio {
     this.apiService
       .register(this.email.trim(), this.password)
       .pipe(
-        timeout(30 * 60 * 1000),
+        timeout(10 * 1000),
         finalize(() => {
           this.isSubmitting = false;
         }),
