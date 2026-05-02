@@ -153,7 +153,7 @@ const recipes = [
 ];
 
 const insertRecipe = db.prepare(
-  'INSERT INTO recipes (name, text, image_url, prep_time, category, user_id) VALUES (?, ?, ?, ?, ?, NULL)'
+  'INSERT INTO recipes (name, text, receptleiras, image_url, prep_time, category, user_id) VALUES (?, ?, ?, ?, ?, ?, NULL)'
 );
 const insertIngredient = db.prepare(
   'INSERT INTO recipe_ingredients (recipe_id, ingredient) VALUES (?, ?)'
@@ -161,7 +161,14 @@ const insertIngredient = db.prepare(
 
 const tx = db.transaction(() => {
   for (const recipe of recipes) {
-    const info = insertRecipe.run(recipe.name, recipe.text, '', recipe.prep_time, recipe.category);
+    const info = insertRecipe.run(
+      recipe.name,
+      recipe.text,
+      recipe.text,
+      '',
+      recipe.prep_time,
+      recipe.category
+    );
     for (const ingredient of recipe.ingredients) {
       insertIngredient.run(info.lastInsertRowid, ingredient);
     }

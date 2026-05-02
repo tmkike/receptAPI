@@ -13,6 +13,7 @@ function runMigrations(database = db) {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       text TEXT NOT NULL,
+      receptleiras TEXT NOT NULL DEFAULT '' CHECK (LENGTH(receptleiras) <= 10000),
       image_url TEXT,
       prep_time TEXT,
       user_id INTEGER,
@@ -54,6 +55,17 @@ function runMigrations(database = db) {
 
   const recipeColumns = database.prepare('PRAGMA table_info(recipes)').all();
   const hasCategoryColumn = recipeColumns.some((column) => column.name === 'category');
+  const hasReceptleirasColumn = recipeColumns.some((column) => column.name === 'receptleiras');
+
+  if (!hasReceptleirasColumn) {
+    database.exec("ALTER TABLE recipes ADD COLUMN receptleiras TEXT NOT NULL DEFAULT '' CHECK (LENGTH(receptleiras) <= 10000)");
+  }
+
+  database.exec(`
+    UPDATE recipes
+    SET receptleiras = text
+    WHERE receptleiras IS NULL OR TRIM(receptleiras) = '';
+  `);
 
   if (!hasCategoryColumn) {
     database.exec("ALTER TABLE recipes ADD COLUMN category TEXT DEFAULT 'Egyéb húsfélék'");
