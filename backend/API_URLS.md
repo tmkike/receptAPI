@@ -43,7 +43,12 @@ Alap utvonal: /api
 - Keres (JSON): {"keyword":"..."}
 - Valasz: {"responseRecipes":[{"receptNev":"..."}, ...]}
 
-8. POST /api/favorites
+8. POST /api/searchRecipes
+- Cel: recept kereses nevben, rovid szovegben es receptleirasban
+- Keres (JSON): {"keyword":"..."}
+- Valasz: {"responseRecipes":[{"receptNev":"...","receptSzoveg":"...","receptLeiras":"...","receptKepURL":"...","receptID":"..."}, ...]}
+
+9. POST /api/favorites
 - Cel: kedvencek kezelese
 - Vedelme: JWT kotelezo minden muvelethez
 - Keres (JSON): {"type":"toFavorite|removeFromfavorite|isFavorite","receptID":"..."}
@@ -52,7 +57,7 @@ Alap utvonal: /api
 - isFavorite valasz: {"responseRecipes":[{"receptID":"..."}, ...]}
 - Hibas valasz: {"favoriteStatus":"error","error":"..."}
 
-9. GET /api/getProfile
+10. GET /api/getProfile
 - Cel: profil adatok lekerese
 - Vedelme: JWT kotelezo
 - Valasz: {"username":"..."}

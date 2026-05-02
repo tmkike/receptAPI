@@ -192,4 +192,21 @@ router.post('/autocomplete', (req, res) => {
   return res.json({ responseRecipes });
 });
 
+router.post('/searchRecipes', (req, res) => {
+  const keyword = String((req.body && req.body.keyword) || '').trim();
+
+  if (!keyword) {
+    return res.json({ responseRecipes: [] });
+  }
+
+  const likeKeyword = `%${keyword}%`;
+  const rows = db
+    .prepare(
+      "SELECT id, name, text, COALESCE(receptleiras, text, '') AS receptleiras, COALESCE(image_url, '') AS image_url, COALESCE(prep_time, '') AS prep_time, COALESCE(category, '') AS category FROM recipes WHERE name LIKE ? OR text LIKE ? OR COALESCE(receptleiras, '') LIKE ? ORDER BY created_at DESC, id DESC LIMIT 50"
+    )
+    .all(likeKeyword, likeKeyword, likeKeyword);
+
+  return res.json({ responseRecipes: rows.map(mapRecipe) });
+});
+
 module.exports = router;
