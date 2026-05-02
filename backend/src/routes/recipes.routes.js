@@ -9,6 +9,7 @@ function mapRecipe(row) {
   return {
     receptNev: row.name,
     receptSzoveg: row.text,
+    receptLeiras: row.receptleiras || row.text || '',
     receptKepURL: row.image_url,
     receptID: String(row.id),
     receptIdo: row.prep_time || '',
@@ -71,7 +72,7 @@ router.get('/recipes', (_req, res) => {
   const categories = parseCategoryFilters(_req.query.categories || _req.query.category);
 
   const baseQuery =
-    "SELECT id, name, text, COALESCE(image_url, '') AS image_url, COALESCE(prep_time, '') AS prep_time, COALESCE(category, '') AS category FROM recipes";
+    "SELECT id, name, text, COALESCE(receptleiras, text, '') AS receptleiras, COALESCE(image_url, '') AS image_url, COALESCE(prep_time, '') AS prep_time, COALESCE(category, '') AS category FROM recipes";
 
   const rows = categories.length
     ? db
@@ -87,7 +88,7 @@ router.get('/recipes', (_req, res) => {
 router.get('/dailyRecipes', (_req, res) => {
   const rows = db
     .prepare(
-      "SELECT id, name, text, COALESCE(image_url, '') AS image_url, COALESCE(prep_time, '') AS prep_time, COALESCE(category, '') AS category FROM recipes ORDER BY RANDOM() LIMIT 5"
+      "SELECT id, name, text, COALESCE(receptleiras, text, '') AS receptleiras, COALESCE(image_url, '') AS image_url, COALESCE(prep_time, '') AS prep_time, COALESCE(category, '') AS category FROM recipes ORDER BY RANDOM() LIMIT 5"
     )
     .all();
 
@@ -121,7 +122,8 @@ router.post('/report', requireAuth, (req, res) => {
 });
 
 router.post('/addRecept', requireAuth, upload.single('kep'), (req, res) => {
-  const { receptNev, receptSzoveg, receptIdo, receptKategoria } = req.body || {};
+  const { receptNev, receptSzoveg, receptLeiras, receptleiras, receptIdo, receptKategoria } =
+    req.body || {};
   const hozzavalok = parseIngredients(req.body ? req.body.hozzavalok : null);
 
   if (!receptNev || !receptSzoveg || !receptIdo) {
@@ -130,10 +132,19 @@ router.post('/addRecept', requireAuth, upload.single('kep'), (req, res) => {
       .json({ is_recorded: 'no', errorMessage: 'missing_required_fields' });
   }
 
+  const normalizedReceptLeiras = String(receptLeiras || receptleiras || receptSzoveg).trim();
+
+  if (normalizedReceptLeiras.length > 10000) {
+    return res.status(400).json({
+      is_recorded: 'no',
+      errorMessage: 'receptleiras_too_long',
+    });
+  }
+
   const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
 
   const insertRecipe = db.prepare(
-    'INSERT INTO recipes (name, text, image_url, prep_time, category, user_id) VALUES (?, ?, ?, ?, ?, ?)'
+    'INSERT INTO recipes (name, text, receptleiras, image_url, prep_time, category, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)'
   );
 
   const insertIngredient = db.prepare(
@@ -144,6 +155,7 @@ router.post('/addRecept', requireAuth, upload.single('kep'), (req, res) => {
     const info = insertRecipe.run(
       String(receptNev).trim(),
       String(receptSzoveg).trim(),
+      normalizedReceptLeiras,
       imageUrl,
       String(receptIdo).trim(),
       String(receptKategoria || 'Egyéb húsfélék').trim(),
