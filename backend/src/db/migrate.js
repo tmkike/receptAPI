@@ -100,6 +100,34 @@ function runMigrations(database = db) {
 
     CREATE INDEX IF NOT EXISTS idx_recipes_category ON recipes(category);
   `);
+
+  database.exec(`
+    UPDATE recipes
+    SET image_url = CASE name
+      WHEN 'Sajtos teszta' THEN '/uploads/recipe-1-sajtos-teszta.jpg'
+      WHEN 'Paradicsomos leves' THEN '/uploads/recipe-2-paradicsomos-leves.jpg'
+      WHEN 'Rantotta' THEN '/uploads/recipe-3-rantotta.jpg'
+      WHEN 'Csirkeporkolt' THEN '/uploads/recipe-4-csirkeporkolt.jpg'
+      WHEN 'Gombas rizotto' THEN '/uploads/recipe-5-gombas-rizotto.jpg'
+      WHEN 'Palacsinta' THEN '/uploads/recipe-6-palacsinta.jpg'
+      WHEN 'Lencseleves' THEN '/uploads/recipe-7-lencseleves.jpg'
+      WHEN 'Tojasos nokedli' THEN '/uploads/recipe-8-tojasos-nokedli.jpg'
+      WHEN 'Rakott krumpli' THEN '/uploads/recipe-9-rakott-krumpli.jpg'
+      WHEN 'Gulyasleves' THEN '/uploads/recipe-10-gulyasleves.jpg'
+      WHEN 'Lecsó' THEN '/uploads/recipe-11-lecso.jpg'
+      WHEN 'Bundas kenyer' THEN '/uploads/recipe-12-bundas-kenyer.jpg'
+      WHEN 'Toltott paprika' THEN '/uploads/recipe-13-toltott-paprika.jpg'
+      WHEN 'Zoldborsofelem' THEN '/uploads/recipe-14-zoldborsofelem.jpg'
+      WHEN 'Magyaros csirkemell' THEN '/uploads/recipe-15-magyaros-csirkemell.jpg'
+      WHEN 'Soska fozelek' THEN '/uploads/recipe-16-soska-fozelek.jpg'
+      WHEN 'Halaszle' THEN '/uploads/recipe-17-halaszle.jpg'
+      WHEN 'Káposztas teszta' THEN '/uploads/recipe-18-kaposztas-teszta.jpg'
+      WHEN 'Fokhagymas gomba' THEN '/uploads/recipe-19-fokhagymas-gomba.jpg'
+      WHEN 'Sult csirkecomb' THEN '/uploads/recipe-20-sult-csirkecomb.jpg'
+      ELSE image_url
+    END
+    WHERE image_url IS NULL OR TRIM(image_url) = '';
+  `);
 }
 
 if (require.main === module) {

@@ -35,8 +35,10 @@ Alap utvonal: /api
 - Vedelme: JWT kotelezo
 - Keres: multipart/form-data
 - Mezok: receptNev, receptSzoveg, receptIdo, receptKategoria, hozzavalok[] + kep (field: kep)
+- Kep szabalyok: max 15 MB feltoltes, automatikus JPG konverzio, max 1 MP (1 000 000 pixel), es max 500 KB vegso fajl
 - Sikeres valasz: {"is_recorded":"yes"}
 - Hibas valasz: {"is_recorded":"no","errorMessage":"..."}
+- Gyakoribb hibakodok: image_too_large, invalid_image_type, image_size_target_unreachable, image_processing_failed
 
 7. POST /api/autocomplete
 - Cel: receptnev automatikus kiegeszites

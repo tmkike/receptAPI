@@ -31,6 +31,20 @@ function createApp() {
   });
 
   app.use((error, _req, res, _next) => {
+    if (error && error.name === 'MulterError' && error.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({
+        is_recorded: 'no',
+        errorMessage: 'image_too_large',
+      });
+    }
+
+    if (error && error.code === 'invalid_image_type') {
+      return res.status(400).json({
+        is_recorded: 'no',
+        errorMessage: 'invalid_image_type',
+      });
+    }
+
     console.error(error);
     res.status(500).json({ error: 'internal_server_error' });
   });

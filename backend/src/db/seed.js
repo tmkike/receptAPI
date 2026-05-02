@@ -152,6 +152,15 @@ const recipes = [
   },
 ];
 
+function slugifyRecipeName(name) {
+  return String(name)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 const insertRecipe = db.prepare(
   'INSERT INTO recipes (name, text, receptleiras, image_url, prep_time, category, user_id) VALUES (?, ?, ?, ?, ?, ?, NULL)'
 );
@@ -160,12 +169,13 @@ const insertIngredient = db.prepare(
 );
 
 const tx = db.transaction(() => {
-  for (const recipe of recipes) {
+  for (const [index, recipe] of recipes.entries()) {
+    const imageUrl = `/uploads/recipe-${index + 1}-${slugifyRecipeName(recipe.name)}.jpg`;
     const info = insertRecipe.run(
       recipe.name,
       recipe.text,
       recipe.text,
-      '',
+      imageUrl,
       recipe.prep_time,
       recipe.category
     );

@@ -1,7 +1,7 @@
 const express = require('express');
 const { db } = require('../db/sqlite');
 const { requireAuth } = require('../middleware/auth');
-const { upload } = require('../middleware/upload');
+const { upload, processUploadedRecipeImage } = require('../middleware/upload');
 
 const router = express.Router();
 
@@ -121,7 +121,7 @@ router.post('/report', requireAuth, (req, res) => {
   }
 });
 
-router.post('/addRecept', requireAuth, upload.single('kep'), (req, res) => {
+router.post('/addRecept', requireAuth, upload.single('kep'), async (req, res) => {
   const { receptNev, receptSzoveg, receptLeiras, receptleiras, receptIdo, receptKategoria } =
     req.body || {};
   const hozzavalok = parseIngredients(req.body ? req.body.hozzavalok : null);
@@ -141,7 +141,20 @@ router.post('/addRecept', requireAuth, upload.single('kep'), (req, res) => {
     });
   }
 
-  const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
+  let uploadedFile = req.file || null;
+
+  if (uploadedFile) {
+    try {
+      uploadedFile = await processUploadedRecipeImage(uploadedFile);
+    } catch (error) {
+      return res.status(400).json({
+        is_recorded: 'no',
+        errorMessage: (error && error.code) || 'image_processing_failed',
+      });
+    }
+  }
+
+  const imageUrl = uploadedFile ? `/uploads/${uploadedFile.filename}` : '';
 
   const insertRecipe = db.prepare(
     'INSERT INTO recipes (name, text, receptleiras, image_url, prep_time, category, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)'
