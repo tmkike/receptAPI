@@ -71,15 +71,52 @@
         <span>perc</span>
       </div>
 
-      <label for="description">Recept leírása</label>
+      <label for="description">Rövid leírás</label>
       <textarea
         id="description"
         name="description"
-        rows="7"
-        placeholder="Írd le az alapanyagokat, lépéseket és a bevált apró trükköket."
+        rows="4"
+        placeholder="Írd le röviden, miről szól a recept."
         [(ngModel)]="description"
         [disabled]="!isLoggedIn"
       ></textarea>
+
+      <div class="field-group">
+        <span class="field-label">Teljes leírás</span>
+        <div class="markdown-editor">
+          <div class="editor-toolbar" aria-label="Szövegszerkesztő eszközök">
+            <button type="button" title="Félkövér szöveg" (click)="formatEditor('bold')" [disabled]="!isLoggedIn">
+              F
+            </button>
+            <button type="button" title="Dőlt szöveg" (click)="formatEditor('italic')" [disabled]="!isLoggedIn">
+              D
+            </button>
+            <button type="button" title="Címsor beszúrása" (click)="formatEditor('formatBlock', 'h2')" [disabled]="!isLoggedIn">
+              Cím
+            </button>
+            <button type="button" title="Felsorolás" (click)="formatEditor('insertUnorderedList')" [disabled]="!isLoggedIn">
+              Felsorolás
+            </button>
+            <button type="button" title="Számozott lista" (click)="formatEditor('insertOrderedList')" [disabled]="!isLoggedIn">
+              Lista
+            </button>
+            <button type="button" title="Normál szöveg" (click)="formatEditor('formatBlock', 'p')" [disabled]="!isLoggedIn">
+              Szöveg
+            </button>
+          </div>
+
+          <div
+            #fullDescriptionEditor
+            class="rich-text-input"
+            role="textbox"
+            aria-multiline="true"
+            data-placeholder="Írd le formázva az alapanyagokat, lépéseket és a bevált trükköket."
+            [attr.contenteditable]="isLoggedIn ? 'true' : 'false'"
+            [class.disabled]="!isLoggedIn"
+            (input)="syncFullDescriptionFromEditor()"
+          ></div>
+        </div>
+      </div>
 
       <div class="form-actions">
         <button

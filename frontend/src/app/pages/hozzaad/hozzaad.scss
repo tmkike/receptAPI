@@ -101,6 +101,65 @@ h1 {
   resize: vertical;
 }
 
+.markdown-editor {
+  display: grid;
+  gap: 10px;
+}
+
+.rich-text-input {
+  min-height: 300px;
+  overflow: auto;
+  padding: 14px;
+  border: 1px solid #9de8e3;
+  border-radius: 10px;
+  background-color: #f8ffff;
+  color: #333;
+  font-size: 16px;
+  line-height: 1.7;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.rich-text-input:focus {
+  border-color: #00b8ad;
+  box-shadow: 0 0 0 3px rgba(0, 184, 173, 0.18);
+}
+
+.rich-text-input:empty::before {
+  color: #6b7776;
+  content: attr(data-placeholder);
+}
+
+.rich-text-input.disabled {
+  opacity: 0.68;
+  pointer-events: none;
+}
+
+.rich-text-input :is(p, ul, ol, h2, h3) {
+  margin: 0 0 12px;
+}
+
+.editor-toolbar {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  width: min(360px, 100%);
+}
+
+.editor-toolbar button {
+  min-height: 36px;
+  padding: 0 10px;
+  border: 1px solid #9de8e3;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #102c2a;
+  font-size: 14px;
+}
+
+.editor-toolbar button:hover {
+  background-color: #e9fbf9;
+}
+
 .recipe-form input:focus,
 .recipe-form select:focus,
 .recipe-form textarea:focus {
@@ -282,5 +341,14 @@ button:disabled {
 
   .form-actions {
     grid-template-columns: 1fr;
+  }
+
+  .markdown-editor {
+    grid-template-columns: 1fr;
+  }
+
+  .editor-toolbar {
+    grid-template-columns: repeat(3, 1fr);
+    width: 100%;
   }
 }
