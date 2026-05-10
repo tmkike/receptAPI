@@ -119,11 +119,13 @@ export class Receptek implements OnInit {
 
   openRecipeDetails(recipe: Recipe): void {
     this.selectedRecipe.set(recipe);
+    this.lockPageScroll();
   }
 
   closeRecipeDetails(): void {
     this.selectedRecipe.set(null);
     this.shareMessage = '';
+    this.unlockPageScroll();
   }
 
   onRecipeCardKeydown(event: KeyboardEvent, recipe: Recipe): void {
@@ -414,7 +416,16 @@ export class Receptek implements OnInit {
 
     if (recipe) {
       this.selectedRecipe.set(recipe);
+      this.lockPageScroll();
     }
+  }
+
+  private lockPageScroll(): void {
+    document.body.style.overflow = 'hidden';
+  }
+
+  private unlockPageScroll(): void {
+    document.body.style.overflow = '';
   }
 
   private copyTextWithFallback(text: string): void {

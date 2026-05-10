@@ -116,11 +116,13 @@ export class Kedvencek implements OnInit {
 
   openRecipeDetails(recipe: Recipe): void {
     this.selectedRecipe.set(recipe);
+    this.lockPageScroll();
   }
 
   closeRecipeDetails(): void {
     this.selectedRecipe.set(null);
     this.shareMessage.set('');
+    this.unlockPageScroll();
   }
 
   onRecipeCardKeydown(event: KeyboardEvent, recipe: Recipe): void {
@@ -229,7 +231,16 @@ export class Kedvencek implements OnInit {
 
     if (recipe) {
       this.selectedRecipe.set(recipe);
+      this.lockPageScroll();
     }
+  }
+
+  private lockPageScroll(): void {
+    document.body.style.overflow = 'hidden';
+  }
+
+  private unlockPageScroll(): void {
+    document.body.style.overflow = '';
   }
 
   private copyTextWithFallback(text: string): void {

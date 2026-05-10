@@ -47,11 +47,13 @@ export class Kezdooldal implements OnInit {
 
   openRecipeDetails(recipe: Recipe): void {
     this.selectedRecipe.set(recipe);
+    this.lockPageScroll();
   }
 
   closeRecipeDetails(): void {
     this.selectedRecipe.set(null);
     this.shareMessage.set('');
+    this.unlockPageScroll();
   }
 
   onRecipeCardKeydown(event: KeyboardEvent, recipe: Recipe): void {
@@ -234,6 +236,14 @@ export class Kezdooldal implements OnInit {
     textArea.select();
     document.execCommand('copy');
     document.body.removeChild(textArea);
+  }
+
+  private lockPageScroll(): void {
+    document.body.style.overflow = 'hidden';
+  }
+
+  private unlockPageScroll(): void {
+    document.body.style.overflow = '';
   }
 
   private escapeHtml(value: string): string {
