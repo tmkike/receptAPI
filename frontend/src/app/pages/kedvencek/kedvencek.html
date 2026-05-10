@@ -62,7 +62,13 @@
   } @else if (favorites().length) {
     <section class="favorite-grid" aria-label="Kedvenc receptek">
       @for (recipe of favorites(); track recipe.receptID) {
-        <article>
+        <article
+          role="button"
+          tabindex="0"
+          (click)="openRecipeDetails(recipe)"
+          (keydown)="onRecipeCardKeydown($event, recipe)"
+          [attr.aria-label]="recipe.receptNev + ' részleteinek megnyitása'"
+        >
           @if (getImageUrl(recipe)) {
             <img [src]="getImageUrl(recipe)" [alt]="recipe.receptNev" />
           }
@@ -73,7 +79,12 @@
               <p class="recipe-time">{{ recipe.receptIdo }}</p>
             }
             <p>{{ recipe.receptSzoveg }}</p>
-            <button type="button" (click)="removeFromFavorites(recipe)">Eltávolítás</button>
+            <button
+              type="button"
+              (click)="stopRecipeDetailsClick($event); removeFromFavorites(recipe)"
+            >
+              Eltávolítás
+            </button>
           </div>
         </article>
       }
@@ -96,5 +107,73 @@
 
   @if (errorMessage()) {
     <p class="status-message error">{{ errorMessage() }}</p>
+  }
+
+  @if (selectedRecipe(); as recipe) {
+    <div class="recipe-modal-backdrop" role="presentation" (click)="closeRecipeDetails()">
+      <section
+        class="recipe-modal"
+        role="dialog"
+        aria-modal="true"
+        [attr.aria-labelledby]="'favorite-modal-title-' + recipe.receptID"
+        (click)="stopRecipeDetailsClick($event)"
+      >
+        <button
+          class="modal-close-button"
+          type="button"
+          (click)="closeRecipeDetails()"
+          aria-label="Részletek bezárása"
+        >
+          ×
+        </button>
+
+        @if (getImageUrl(recipe)) {
+          <img class="modal-recipe-image" [src]="getImageUrl(recipe)" [alt]="recipe.receptNev" />
+        }
+
+        <div class="modal-image-actions">
+          <button type="button" class="remove-button" (click)="removeFromFavorites(recipe)">
+            Eltávolítás
+          </button>
+
+          <button class="share-button" type="button" (click)="shareRecipe(recipe)">
+            Link másolása
+          </button>
+        </div>
+
+        <div class="modal-recipe-content">
+          @if (shareMessage()) {
+            <p class="modal-share-message">{{ shareMessage() }}</p>
+          }
+
+          <h2 [id]="'favorite-modal-title-' + recipe.receptID">{{ recipe.receptNev }}</h2>
+
+          <div class="modal-recipe-meta">
+            @if (recipe.receptKategoria) {
+              <p class="recipe-category">{{ recipe.receptKategoria }}</p>
+            }
+            @if (recipe.receptIdo) {
+              <p class="recipe-time">{{ recipe.receptIdo }}</p>
+            }
+          </div>
+
+          <div class="modal-recipe-section">
+            <p class="modal-section-label">Rövid leírás</p>
+            <p class="modal-recipe-text">{{ recipe.receptSzoveg }}</p>
+          </div>
+
+          @if (recipe.receptLeiras) {
+            <div class="modal-recipe-section">
+              <h3>Leírás</h3>
+              <div class="modal-markdown" [innerHTML]="renderMarkdown(recipe.receptLeiras)"></div>
+            </div>
+          }
+
+          <button class="modal-done-button" type="button" (click)="closeRecipeDetails()">
+            Kész
+          </button>
+        </div>
+      </section>
+    </div>
   }
 </main>

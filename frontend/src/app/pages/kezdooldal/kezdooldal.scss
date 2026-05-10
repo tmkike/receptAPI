@@ -137,6 +137,14 @@ h1 {
   border: 1px solid #d8eeee;
   border-radius: 8px;
   background-color: #f8ffff;
+  cursor: pointer;
+}
+
+.recipe-preview:hover,
+.recipe-preview:focus-visible {
+  border-color: #00b8ad;
+  box-shadow: 0 14px 32px rgb(0 127 120 / 14%);
+  outline: none;
 }
 
 .recipe-preview:not(:has(img)) {
@@ -244,6 +252,183 @@ h1 {
   color: #9b1c1c;
 }
 
+.recipe-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background-color: rgb(0 0 0 / 46%);
+}
+
+.recipe-modal {
+  position: relative;
+  width: min(920px, 100%);
+  max-height: min(88vh, 860px);
+  overflow: auto;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 26px 70px rgb(0 0 0 / 24%);
+}
+
+.modal-close-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgb(255 255 255 / 70%);
+  border-radius: 50%;
+  background-color: rgb(255 255 255 / 94%);
+  color: #102c2a;
+  cursor: pointer;
+  font-size: 30px;
+  line-height: 1;
+}
+
+.modal-recipe-image {
+  display: block;
+  width: 100%;
+  max-height: 430px;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+}
+
+.modal-image-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px 28px 0;
+}
+
+.modal-image-actions button,
+.modal-done-button {
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+}
+
+.modal-favorite-button,
+.modal-done-button {
+  border: none;
+  background-color: #00b8ad;
+  color: #000;
+}
+
+.modal-favorite-button.active {
+  background-color: #007f78;
+  color: #fff;
+}
+
+.share-button {
+  border: 1px solid #9de8e3;
+  background-color: #fff;
+  color: #102c2a;
+}
+
+.modal-recipe-content {
+  display: grid;
+  gap: 18px;
+  padding: 28px;
+}
+
+.modal-recipe-content h2 {
+  margin: 0;
+  font-size: clamp(28px, 4vw, 40px);
+  line-height: 1.12;
+}
+
+.modal-recipe-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.recipe-modal .recipe-category,
+.recipe-modal .recipe-time {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  margin: 0;
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.recipe-modal .recipe-category {
+  background-color: #e9fbf9;
+  color: #006b65;
+}
+
+.recipe-modal .recipe-time {
+  border: 1px solid #9de8e3;
+  color: #102c2a;
+}
+
+.modal-recipe-section {
+  display: grid;
+  gap: 8px;
+}
+
+.modal-recipe-section h3,
+.modal-section-label {
+  margin: 0;
+  color: #102c2a;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.modal-recipe-text,
+.modal-markdown {
+  margin: 0;
+  color: #333;
+  font-size: 17px;
+  line-height: 1.75;
+}
+
+.modal-recipe-text {
+  white-space: pre-line;
+}
+
+.modal-markdown :is(p, ul, ol, h3, h4, h5) {
+  margin: 0 0 12px;
+}
+
+.modal-markdown :is(ul, ol) {
+  padding-left: 24px;
+}
+
+.modal-markdown :is(h3, h4, h5, strong) {
+  color: #102c2a;
+}
+
+.modal-done-button {
+  justify-self: end;
+  min-width: 130px;
+}
+
+.modal-share-message {
+  margin: 0;
+  font-weight: 800;
+}
+
+@media (max-width: 900px) {
+  .modal-close-button {
+    position: sticky;
+    top: 12px;
+    margin: 12px 12px -54px auto;
+  }
+}
+
 .features article {
   padding: 22px;
   border: 1px solid #d8eeee;
@@ -297,5 +482,26 @@ h1 {
 
   .recipe-preview-content {
     padding: 18px 68px 18px 18px;
+  }
+
+  .recipe-modal-backdrop {
+    padding: 12px;
+  }
+
+  .modal-image-actions {
+    padding: 14px 18px 0;
+  }
+
+  .modal-image-actions button {
+    width: 100%;
+  }
+
+  .modal-recipe-content {
+    padding: 22px 18px;
+  }
+
+  .modal-recipe-image {
+    max-height: 300px;
+    aspect-ratio: 4 / 3;
   }
 }

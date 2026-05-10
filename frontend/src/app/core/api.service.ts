@@ -11,6 +11,7 @@ export type AuthResponse = {
 export type Recipe = {
   receptNev: string;
   receptSzoveg: string;
+  receptLeiras?: string;
   receptKepURL: string;
   receptID: string;
   receptIdo?: string;

@@ -39,8 +39,10 @@ router.post('/favorites', requireAuth, (req, res) => {
             recipes.id,
             recipes.name,
             recipes.text,
+            COALESCE(recipes.receptleiras, recipes.text, '') AS receptleiras,
             COALESCE(recipes.image_url, '') AS image_url,
-            COALESCE(recipes.prep_time, '') AS prep_time
+            COALESCE(recipes.prep_time, '') AS prep_time,
+            COALESCE(recipes.category, '') AS category
           FROM favorites
           JOIN recipes ON recipes.id = favorites.recipe_id
           WHERE favorites.user_id = ?
@@ -52,8 +54,10 @@ router.post('/favorites', requireAuth, (req, res) => {
         receptID: String(row.id),
         receptNev: row.name,
         receptSzoveg: row.text,
+        receptLeiras: row.receptleiras || row.text || '',
         receptKepURL: row.image_url,
         receptIdo: row.prep_time,
+        receptKategoria: row.category,
       }));
       return res.json({ responseRecipes });
     }

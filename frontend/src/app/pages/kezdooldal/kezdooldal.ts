@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, HostListener, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ApiService, Recipe } from '../../core/api.service';
 
@@ -15,6 +15,8 @@ export class Kezdooldal implements OnInit {
   isLoadingRecipes = signal(false);
   recipesErrorMessage = signal('');
   favoriteMessage = signal('');
+  shareMessage = signal('');
+  selectedRecipe = signal<Recipe | null>(null);
 
   constructor(private readonly apiService: ApiService) {}
 
@@ -41,6 +43,45 @@ export class Kezdooldal implements OnInit {
 
   getImageUrl(recipe: Recipe): string {
     return this.apiService.getImageUrl(recipe.receptKepURL);
+  }
+
+  openRecipeDetails(recipe: Recipe): void {
+    this.selectedRecipe.set(recipe);
+  }
+
+  closeRecipeDetails(): void {
+    this.selectedRecipe.set(null);
+    this.shareMessage.set('');
+  }
+
+  onRecipeCardKeydown(event: KeyboardEvent, recipe: Recipe): void {
+    if (event.key !== 'Enter' && event.key !== ' ') {
+      return;
+    }
+
+    event.preventDefault();
+    this.openRecipeDetails(recipe);
+  }
+
+  stopRecipeDetailsClick(event: MouseEvent): void {
+    event.stopPropagation();
+  }
+
+  async shareRecipe(recipe: Recipe): Promise<void> {
+    const recipeUrl = `${window.location.origin}/receptek?recept=${encodeURIComponent(recipe.receptID)}`;
+    this.shareMessage.set('');
+
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(recipeUrl);
+      } else {
+        this.copyTextWithFallback(recipeUrl);
+      }
+
+      this.shareMessage.set('A recept linkje a vágólapra került.');
+    } catch (_error) {
+      this.shareMessage.set('Nem sikerült a linket a vágólapra másolni.');
+    }
   }
 
   isLoggedIn(): boolean {
@@ -114,5 +155,100 @@ export class Kezdooldal implements OnInit {
       nextIds.delete(recipeId);
       return nextIds;
     });
+  }
+
+  renderMarkdown(value: string | undefined): string {
+    if (!value) {
+      return '';
+    }
+
+    const lines = this.escapeHtml(value).split(/\r?\n/);
+    const htmlParts: string[] = [];
+    let listType: 'ul' | 'ol' | null = null;
+
+    const closeList = () => {
+      if (listType) {
+        htmlParts.push(`</${listType}>`);
+        listType = null;
+      }
+    };
+
+    for (const rawLine of lines) {
+      const line = rawLine.trim();
+
+      if (!line) {
+        closeList();
+        continue;
+      }
+
+      const headingMatch = line.match(/^(#{1,3})\s+(.+)$/);
+      if (headingMatch) {
+        closeList();
+        const level = headingMatch[1].length + 2;
+        htmlParts.push(`<h${level}>${this.renderInlineMarkdown(headingMatch[2])}</h${level}>`);
+        continue;
+      }
+
+      const unorderedMatch = line.match(/^[-*]\s+(.+)$/);
+      if (unorderedMatch) {
+        if (listType !== 'ul') {
+          closeList();
+          htmlParts.push('<ul>');
+          listType = 'ul';
+        }
+        htmlParts.push(`<li>${this.renderInlineMarkdown(unorderedMatch[1])}</li>`);
+        continue;
+      }
+
+      const orderedMatch = line.match(/^\d+\.\s+(.+)$/);
+      if (orderedMatch) {
+        if (listType !== 'ol') {
+          closeList();
+          htmlParts.push('<ol>');
+          listType = 'ol';
+        }
+        htmlParts.push(`<li>${this.renderInlineMarkdown(orderedMatch[1])}</li>`);
+        continue;
+      }
+
+      closeList();
+      htmlParts.push(`<p>${this.renderInlineMarkdown(line)}</p>`);
+    }
+
+    closeList();
+    return htmlParts.join('');
+  }
+
+  @HostListener('document:keydown.escape')
+  closeRecipeDetailsWithEscape(): void {
+    this.closeRecipeDetails();
+  }
+
+  private copyTextWithFallback(text: string): void {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.setAttribute('readonly', '');
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-9999px';
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textArea);
+  }
+
+  private escapeHtml(value: string): string {
+    return value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  private renderInlineMarkdown(value: string): string {
+    return value
+      .replace(/`([^`]+)`/g, '<code>$1</code>')
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*([^*]+)\*/g, '<em>$1</em>');
   }
 }
